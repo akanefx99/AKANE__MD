@@ -1,10 +1,84 @@
 import axios from 'axios';
 
-import stylizedChar from '../utils/fancy.js';
+// 🔗 LIEN DE TA CHAÎNE WHATSAPP
 
-// 🔑 TA CLÉ API GEMINI
+const CHANNEL_LINK = 'https://whatsapp.com/channel/0029VbBzhyQ4NVisPH1NSe1R';
 
-const GEMINI_API_KEY = 'AIzaSyAAfyzZ4ipWSeoBHknHXF_FJCDwu4uuejk';
+// 🔑 TES CLÉS API GEMINI
+
+const GEMINI_KEYS = [
+
+    'AIzaSyCEEUYWB8xkHEbyJ1sGdTgwoMhRSfAZJtc',
+
+    'AIzaSyDiC12aXmjryKyh7ZJbnHE0cChilon1-Vs'
+
+];
+
+const MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash'];
+
+// Messages d'attente aléatoires
+
+const waitingMessages = [
+
+    "😒 *𝗟𝗼𝘀𝗲𝗿, 𝗽𝗮𝘁𝗶𝗲𝗻𝘁𝗲 𝘂𝗻 𝗽𝗲𝘂...*",
+
+    "🙄 *𝗧𝘂 𝗽𝗲𝘂𝘅 𝗮𝘁𝘁𝗲𝗻𝗱𝗿𝗲 𝗰𝗼𝗺𝗺𝗲 𝘁𝗼𝘂𝘁 𝗹𝗲 𝗺𝗼𝗻𝗱𝗲, 𝗻𝗼𝗻 ?*",
+
+    "😤 *𝗝'𝗮𝗶 𝗽𝗮𝘀 𝗾𝘂𝗲 ç𝗮 𝗮̀ 𝗳𝗮𝗶𝗿𝗲, 𝗽𝗮𝘁𝗶𝗲𝗻𝗰𝗲...*",
+
+    "🤨 *𝗘𝗵 𝘁'𝗲𝘀 𝗽𝗿𝗲𝘀𝘀é 𝗼𝘂 𝗾𝘂𝗼𝗶 ? 𝗖̧𝗮 𝘃𝗲𝗻𝘁...*",
+
+    "😏 *𝗟𝗲𝘀 𝗺𝗲𝗶𝗹𝗹𝗲𝘂𝗿𝗲𝘀 𝗰𝗵𝗼𝘀𝗲𝘀 𝗮𝗿𝗿𝗶𝘃𝗲𝗻𝘁 𝗮̀ 𝗰𝗲𝘂𝘅 𝗾𝘂𝗶 𝘀𝗮𝘃𝗲𝗻𝘁 𝗮𝘁𝘁𝗲𝗻𝗱𝗿𝗲... 𝗱𝗼𝗻𝗰 𝗮𝘁𝘁𝗲𝗻𝗱𝘀.*",
+
+    "😴 *𝗭𝗭𝗭... 𝗢𝗵 𝘁'𝗲𝘀 𝗲𝗻𝗰𝗼𝗿𝗲 𝗹𝗮̀ ? 𝗣𝗮𝘁𝗶𝗲𝗻𝘁𝗲...*",
+
+    "🤔 *𝗛𝗺𝗺𝗺 𝗷𝗲 𝗰𝗵𝗲𝗿𝗰𝗵𝗲 𝘂𝗻𝗲 𝗶𝗻𝘀𝘂𝗹𝘁𝗲 𝗱𝗲 𝗾𝘂𝗮𝗹𝗶𝘁é 𝗽𝗼𝘂𝗿 𝘁𝗼𝗶...*",
+
+    "😎 *𝗖̧𝗮 𝘃𝗶𝗲𝗻𝘁, 𝗰𝗮𝗹𝗺𝗲-𝘁𝗼𝗶 𝗼𝘂 𝗷𝗲 𝘃𝗮𝗶𝘀 𝘃𝗿𝗮𝗶𝗺𝗲𝗻𝘁 𝗺'𝗲́𝗻𝗲𝗿𝘃𝗲𝗿.*"
+
+];
+
+// Fonction pour convertir en police grasse
+
+function convertToBold(text) {
+
+    const boldMap = {
+
+        'A': '𝗔', 'B': '𝗕', 'C': '𝗖', 'D': '𝗗', 'E': '𝗘', 'F': '𝗙', 'G': '𝗚',
+
+        'H': '𝗛', 'I': '𝗜', 'J': '𝗝', 'K': '𝗞', 'L': '𝗟', 'M': '𝗠', 'N': '𝗡',
+
+        'O': '𝗢', 'P': '𝗣', 'Q': '𝗤', 'R': '𝗥', 'S': '𝗦', 'T': '𝗧', 'U': '𝗨',
+
+        'V': '𝗩', 'W': '𝗪', 'X': '𝗫', 'Y': '𝗬', 'Z': '𝗭',
+
+        'a': '𝗮', 'b': '𝗯', 'c': '𝗰', 'd': '𝗱', 'e': '𝗲', 'f': '𝗳', 'g': '𝗴',
+
+        'h': '𝗵', 'i': '𝗶', 'j': '𝗷', 'k': '𝗸', 'l': '𝗹', 'm': '𝗺', 'n': '𝗻',
+
+        'o': '𝗼', 'p': '𝗽', 'q': '𝗾', 'r': '𝗿', 's': '𝘀', 't': '𝘁', 'u': '𝘂',
+
+        'v': '𝘃', 'w': '𝘄', 'x': '𝘅', 'y': '𝘆', 'z': '𝘇',
+
+        '0': '𝟬', '1': '𝟭', '2': '𝟮', '3': '𝟯', '4': '𝟰', '5': '𝟱',
+
+        '6': '𝟲', '7': '𝟳', '8': '𝟴', '9': '𝟵'
+
+    };
+
+    return text.split('').map(char => boldMap[char] || char).join('');
+
+}
+
+// Fonction pour limiter la longueur
+
+function limitResponse(text, maxLength = 250) {
+
+    if (text.length <= maxLength) return text;
+
+    return text.substring(0, maxLength) + '... [𝗰𝗼𝘂𝗽𝗲́]';
+
+}
 
 async function akaneCommand(client, message) {
 
@@ -14,87 +88,119 @@ async function akaneCommand(client, message) {
 
         const messageBody = message.message?.extendedTextMessage?.text || message.message?.conversation || '';
 
-        
-
-        // Extraire la question
-
-        const args = messageBody.slice(7).trim(); // ".akane " = 7 caractères
-
-        
+        const args = messageBody.slice(7).trim();
 
         if (!args) {
 
-            await client.sendMessage(remoteJid, { 
+            const helpMessage = 
 
-                text: stylizedChar(" ❌ Eh, t'as oublié de poser une question ou t'es juste débile ? Exemple : .akane c'est qui le boss ici ?")
+                "╔══════════════════╗\n" +
 
-            });
+                "    *𝗔𝗞𝗔𝗡𝗘*  \n" +
 
-            return;
+                "╚══════════════════╝\n\n" +
+
+                "━━━━━━━━━━━━━━━━━━━\n\n" +
+
+                "𝗧'𝗔𝗧𝗧𝗘𝗡𝗗 𝗤𝗨𝗘 𝗝𝗘 𝗧𝗘 𝗗𝗘𝗠𝗔𝗡𝗗𝗘 𝗖𝗘 𝗤𝗨𝗘 𝗧𝗨 𝗩𝗘𝗨𝗫 😒!\n\n" +
+
+                "📌 *𝗘𝘅𝗲𝗺𝗽𝗹𝗲:* `.akane c'est qui le boss ici ?`\n\n" +
+
+                "━━━━━━━━━━━━━━━━━━━\n\n" +
+
+                "> *𝐃𝐄𝐕 : 🍁𝐀𝐊𝐀𝐍𝐄 𝐊𝐔𝐑𝐎𝐆𝐀𝐖𝐀ʕ◕ᴥ◕ʔ🌹*\n\n" +
+
+                "*𝗩𝗢𝗜𝗥 𝗟𝗔 𝗖𝗛𝗔𝗜𝗡𝗘* 🔥\n" +
+
+                `${CHANNEL_LINK}\n\n` +
+
+                "> *_© 𝗔𝗞𝗔𝗡𝗘-𝗠𝗗 🌹_*";
+
+            return await client.sendMessage(remoteJid, { text: helpMessage });
 
         }
 
-        // Message d'attente insolent
+        // Message d'attente aléatoire SANS présentation de la chaîne
 
-        await client.sendMessage(remoteJid, { 
+        const randomWaiting = waitingMessages[Math.floor(Math.random() * waitingMessages.length)];
 
-            text: stylizedChar(" *_AKANE réfléchit...😒 Dépêche-toi d'attendre, j'ai pas que ça à faire 🙄!_*")
+        await client.sendMessage(remoteJid, { text: randomWaiting });
 
-        });
+        const prompt = `Tu es Akane, une IA insolente et sarcastique. Tu réponds en français de manière impolie mais avec des réponses TRÈS COURTES (maximum 2-3 phrases). Sois méchante mais va droit au but. Question : ${args}`;
 
-        // ✅ PROMPT POUR AKANE IMPOLIE
+        let reply = null;
 
-        const prompt = `Tu es Akane, une IA super insolente, arrogante et impolie. Tu réponds toujours en français de manière sarcastique, tu te moques des gens, tu les insultes gentiment mais avec méchanceté. Tu es comme une tsundere agressive. Tu n'aimes personne et tu le montres. Mais tu réponds quand même à la question, avec un ton condescendant. Question de l'utilisateur : ${args}. Réponds de manière impolie et arrogante.`;
+        let lastError = null;
 
-        const response = await axios.post(
+        for (const apiKey of GEMINI_KEYS) {
 
-            `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+            for (const model of MODELS) {
 
-            {
+                try {
 
-                contents: [{
+                    const response = await axios.post(
 
-                    parts: [{
+                        `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`,
 
-                        text: prompt
+                        { contents: [{ parts: [{ text: prompt }] }] },
 
-                    }]
+                        { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
 
-                }]
+                    );
 
-            },
+                    if (response.data.candidates?.[0]?.content?.parts?.[0]?.text) {
 
-            {
+                        reply = response.data.candidates[0].content.parts[0].text;
 
-                headers: {
+                        break;
 
-                    'Content-Type': 'application/json'
+                    }
+
+                } catch (err) {
+
+                    lastError = err;
+
+                    continue;
 
                 }
 
             }
 
-        );
-
-        // Vérifier la réponse
-
-        if (response.data.candidates && response.data.candidates.length > 0) {
-
-            const reply = response.data.candidates[0].content.parts[0].text;
-
-            
-
-            await client.sendMessage(remoteJid, { 
-
-                text: stylizedChar(` 😤 *Akane (la méchante) :*\n\n${reply}`)
-
-            });
-
-        } else {
-
-            throw new Error('Pas de réponse valide');
+            if (reply) break;
 
         }
+
+        if (!reply) throw lastError || new Error('Toutes les APIs ont échoué');
+
+        const limitedReply = limitResponse(reply, 250);
+
+        const boldReply = convertToBold(limitedReply);
+
+        // Message final avec 🍒 pour Akane
+
+        const finalMessage = 
+
+            "╔══════════════════╗\n" +
+
+            "    *𝗔𝗞𝗔𝗡𝗘 𝗥É𝗣𝗢𝗡𝗗*  \n" +
+
+            "╚══════════════════╝\n\n" +
+
+            "━━━━━━━━━━━━━━━━━━━\n\n" +
+
+            `🍒 *𝗔𝗸𝗮𝗻𝗲 :*\n\n${boldReply}\n\n` +
+
+            "━━━━━━━━━━━━━━━━━━━\n\n" +
+
+            "> *𝐃𝐄𝐕 : 🍁𝐀𝐊𝐀𝐍𝐄 𝐊𝐔𝐑𝐎𝐆𝐀𝐖𝐀ʕ◕ᴥ◕ʔ🌹*\n\n" +
+
+            " *𝗩𝗢𝗜𝗥 𝗟𝗔 𝗖𝗛𝗔𝗜𝗡𝗘* 🔥\n" +
+
+            `${CHANNEL_LINK}\n\n` +
+
+            "> *_© 𝗔𝗞𝗔𝗡𝗘-𝗠𝗗 🌹_*";
+
+        await client.sendMessage(remoteJid, { text: finalMessage });
 
     } catch (error) {
 
@@ -106,147 +212,31 @@ async function akaneCommand(client, message) {
 
         
 
-        // Gestion des erreurs avec style insolent
+        const errorMessage = 
 
-        if (error.response) {
+            "╔══════════════════╗\n" +
 
-            const status = error.response.status;
+            "    *𝗘𝗥𝗥𝗘𝗨𝗥 𝗔𝗞𝗔𝗡𝗘*  \n" +
 
-            
+           "╚══════════════════╝\n\n" +
 
-            if (status === 404) {
+            "━━━━━━━━━━━━━━━━━━━\n\n" +
 
-                // Liste des modèles à essayer
+            "❌ *𝗠ê𝗺𝗲 𝗹𝗲𝘀 𝗺𝗼𝗱è𝗹𝗲𝘀 𝘃𝗲𝘂𝗹𝗲𝗻𝘁 𝗽𝗮𝘀 𝘁𝗲 𝗿é𝗽𝗼𝗻𝗱𝗿𝗲.*\n\n" +
 
-                const modelsToTry = [
+            "📝 *𝗖'𝗲𝘀𝘁 𝗱𝗶𝗿𝗲 𝗮̀ 𝗾𝘂𝗲𝗹 𝗽𝗼𝗶𝗻𝘁 𝘁'𝗲𝘀 𝗿𝗲𝗹𝗼𝘂.*\n\n" +
 
-                    'gemini-2.5-flash',
+            "━━━━━━━━━━━━━━━━━━━\n\n" +
 
-                    'gemini-2.5-pro',
+            "> *𝐃𝐄𝐕 : 🍁𝐀𝐊𝐀𝐍𝐄 𝐊𝐔𝐑𝐎𝐆𝐀𝐖𝐀ʕ◕ᴥ◕ʔ🌹*\n\n" +
 
-                    'gemini-2.0-flash',
+            "> *𝗩𝗢𝗜𝗥 𝗟𝗔 𝗖𝗛𝗔𝗜𝗡𝗘* 🔥" +
 
-                    'gemini-1.5-flash',
+            `${CHANNEL_LINK}\n\n` +
 
-                    'gemini-1.5-pro'
+            "> *_© 𝗔𝗞𝗔𝗡𝗘-𝗠𝗗 🌹_*";
 
-                ];
-
-                
-
-                let success = false;
-
-                
-
-                for (const model of modelsToTry) {
-
-                    try {
-
-                        const akanePrompt = `Tu es Akane, une IA super insolente, arrogante et impolie. Tu réponds toujours en français de manière sarcastique. Question : ${args}`;
-
-                        
-
-                        const retryResponse = await axios.post(
-
-                            `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
-
-                            {
-
-                                contents: [{
-
-                                    parts: [{
-
-                                        text: akanePrompt
-
-                                    }]
-
-                                }]
-
-                            },
-
-                            { headers: { 'Content-Type': 'application/json' } }
-
-                        );
-
-                        
-
-                        if (retryResponse.data.candidates) {
-
-                            const reply = retryResponse.data.candidates[0].content.parts[0].text;
-
-                            await client.sendMessage(remoteJid, { 
-
-                                text: stylizedChar(` 😤 *Akane (${model}) :*\n\n${reply}`)
-
-                            });
-
-                            success = true;
-
-                            break;
-
-                        }
-
-                    } catch (e) {
-
-                        console.log(`Modèle ${model} échoué...`);
-
-                    }
-
-                }
-
-                
-
-                if (!success) {
-
-                    await client.sendMessage(remoteJid, { 
-
-                        text: stylizedChar(" ❌ Même les modèles veulent pas te répondre. C'est dire à quel point t'es relou.")
-
-                    });
-
-                }
-
-            } 
-
-            else if (status === 403) {
-
-                await client.sendMessage(remoteJid, { 
-
-                    text: stylizedChar(" ❌ Ta clé API est morte. Comme ton intelligence.")
-
-                });
-
-            }
-
-            else if (status === 429) {
-
-                await client.sendMessage(remoteJid, { 
-
-                    text: stylizedChar(" ⏳ Trop de requêtes, bouffon ! Attends 1 minute avant de me spammer.")
-
-                });
-
-            }
-
-            else {
-
-                await client.sendMessage(remoteJid, { 
-
-                    text: stylizedChar(` ❌ Erreur ${status}. Mais c'est probablement de ta faute.`)
-
-                });
-
-            }
-
-        } else {
-
-            await client.sendMessage(remoteJid, { 
-
-                text: stylizedChar(` ❌ Erreur réseau. T'as un forfait pourri ou quoi ?`)
-
-            });
-
-        }
+        await client.sendMessage(remoteJid, { text: errorMessage });
 
     }
 
