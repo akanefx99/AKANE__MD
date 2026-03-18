@@ -1,0 +1,255 @@
+import axios from 'axios';
+
+import stylizedChar from '../utils/fancy.js';
+
+// 🔑 TA CLÉ API GEMINI
+
+const GEMINI_API_KEY = 'AIzaSyAAfyzZ4ipWSeoBHknHXF_FJCDwu4uuejk';
+
+async function akaneCommand(client, message) {
+
+    try {
+
+        const remoteJid = message.key?.remoteJid;
+
+        const messageBody = message.message?.extendedTextMessage?.text || message.message?.conversation || '';
+
+        
+
+        // Extraire la question
+
+        const args = messageBody.slice(7).trim(); // ".akane " = 7 caractères
+
+        
+
+        if (!args) {
+
+            await client.sendMessage(remoteJid, { 
+
+                text: stylizedChar(" ❌ Eh, t'as oublié de poser une question ou t'es juste débile ? Exemple : .akane c'est qui le boss ici ?")
+
+            });
+
+            return;
+
+        }
+
+        // Message d'attente insolent
+
+        await client.sendMessage(remoteJid, { 
+
+            text: stylizedChar(" 😒 *AKANE 🍁*réfléchit... Dépêche-toi d'attendre, j'ai pas que ça à faire !")
+
+        });
+
+        // ✅ PROMPT POUR AKANE IMPOLIE
+
+        const prompt = `Tu es Akane, une IA super insolente, arrogante et impolie. Tu réponds toujours en français de manière sarcastique, tu te moques des gens, tu les insultes gentiment mais avec méchanceté. Tu es comme une tsundere agressive. Tu n'aimes personne et tu le montres. Mais tu réponds quand même à la question, avec un ton condescendant. Question de l'utilisateur : ${args}. Réponds de manière impolie et arrogante.`;
+
+        const response = await axios.post(
+
+            `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+
+            {
+
+                contents: [{
+
+                    parts: [{
+
+                        text: prompt
+
+                    }]
+
+                }]
+
+            },
+
+            {
+
+                headers: {
+
+                    'Content-Type': 'application/json'
+
+                }
+
+            }
+
+        );
+
+        // Vérifier la réponse
+
+        if (response.data.candidates && response.data.candidates.length > 0) {
+
+            const reply = response.data.candidates[0].content.parts[0].text;
+
+            
+
+            await client.sendMessage(remoteJid, { 
+
+                text: stylizedChar(` 😤 *Akane (la méchante) :*\n\n${reply}`)
+
+            });
+
+        } else {
+
+            throw new Error('Pas de réponse valide');
+
+        }
+
+    } catch (error) {
+
+        console.error('Erreur Akane:', error);
+
+        
+
+        const remoteJid = message.key?.remoteJid;
+
+        
+
+        // Gestion des erreurs avec style insolent
+
+        if (error.response) {
+
+            const status = error.response.status;
+
+            
+
+            if (status === 404) {
+
+                // Liste des modèles à essayer
+
+                const modelsToTry = [
+
+                    'gemini-2.5-flash',
+
+                    'gemini-2.5-pro',
+
+                    'gemini-2.0-flash',
+
+                    'gemini-1.5-flash',
+
+                    'gemini-1.5-pro'
+
+                ];
+
+                
+
+                let success = false;
+
+                
+
+                for (const model of modelsToTry) {
+
+                    try {
+
+                        const akanePrompt = `Tu es Akane, une IA super insolente, arrogante et impolie. Tu réponds toujours en français de manière sarcastique. Question : ${args}`;
+
+                        
+
+                        const retryResponse = await axios.post(
+
+                            `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
+
+                            {
+
+                                contents: [{
+
+                                    parts: [{
+
+                                        text: akanePrompt
+
+                                    }]
+
+                                }]
+
+                            },
+
+                            { headers: { 'Content-Type': 'application/json' } }
+
+                        );
+
+                        
+
+                        if (retryResponse.data.candidates) {
+
+                            const reply = retryResponse.data.candidates[0].content.parts[0].text;
+
+                            await client.sendMessage(remoteJid, { 
+
+                                text: stylizedChar(` 😤 *Akane (${model}) :*\n\n${reply}`)
+
+                            });
+
+                            success = true;
+
+                            break;
+
+                        }
+
+                    } catch (e) {
+
+                        console.log(`Modèle ${model} échoué...`);
+
+                    }
+
+                }
+
+                
+
+                if (!success) {
+
+                    await client.sendMessage(remoteJid, { 
+
+                        text: stylizedChar(" ❌ Même les modèles veulent pas te répondre. C'est dire à quel point t'es relou.")
+
+                    });
+
+                }
+
+            } 
+
+            else if (status === 403) {
+
+                await client.sendMessage(remoteJid, { 
+
+                    text: stylizedChar(" ❌ Ta clé API est morte. Comme ton intelligence.")
+
+                });
+
+            }
+
+            else if (status === 429) {
+
+                await client.sendMessage(remoteJid, { 
+
+                    text: stylizedChar(" ⏳ Trop de requêtes, bouffon ! Attends 1 minute avant de me spammer.")
+
+                });
+
+            }
+
+            else {
+
+                await client.sendMessage(remoteJid, { 
+
+                    text: stylizedChar(` ❌ Erreur ${status}. Mais c'est probablement de ta faute.`)
+
+                });
+
+            }
+
+        } else {
+
+            await client.sendMessage(remoteJid, { 
+
+                text: stylizedChar(` ❌ Erreur réseau. T'as un forfait pourri ou quoi ?`)
+
+            });
+
+        }
+
+    }
+
+}
+
+export default akaneCommand;
