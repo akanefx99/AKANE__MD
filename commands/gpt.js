@@ -38,7 +38,7 @@ async function akaneCommand(client, message) {
 
         await client.sendMessage(remoteJid, { 
 
-            text: stylizedChar(" 😒 *AKANE 🍁*réfléchit... Dépêche-toi d'attendre, j'ai pas que ça à faire !")
+            text: stylizedChar(" *_AKANE réfléchit...😒 Dépêche-toi d'attendre, j'ai pas que ça à faire 🙄!_*")
 
         });
 
