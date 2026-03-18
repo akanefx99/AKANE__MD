@@ -18,10 +18,11 @@ import sender from '../commands/sender.js'
 import fuck from '../commands/fuck.js'
 import bug from '../commands/bug.js'
 import dlt from '../commands/dlt.js'
-import save from '../commands/save.js'
+import bible from '../commands/bible.js'
 import pp from '../commands/pp.js'
 import premiums from '../commands/premiums.js'
 import reactions from '../commands/reactions.js'
+import akane from '../commands/gpt.js'
 import media from '../commands/media.js'
 import set from '../commands/set.js'
 import fancy from '../commands/fancy.js'
@@ -87,7 +88,7 @@ break
    break
   case 'akane': // @cat: utils
     await react (client, message)
-        await gpt(client, message)
+        await akane(client, message)
                     break
     case 'vocal': // @cat: une
                     await react (client, message)
@@ -190,9 +191,9 @@ break
                     await viewonce(client, message)
                     break
 
-                case 'save': // @cat: media
+                case 'bible': // @cat: media
                     await react(client, message)
-                    await save(client, message)
+                    await bible(client, message)
                     break
 
                 case 'tiktok': // @cat: media
