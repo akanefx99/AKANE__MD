@@ -32,51 +32,71 @@ function getCategoryIcon(category) {
 
   const c = category.toLowerCase();
 
-  if (c === "utils") return "⚙️";
+  // 🔥 SEULEMENT LES CATÉGORIES DEMANDÉES
 
-  if (c === "media") return "📸";
+  if (c === "premium") return "✨";
 
-  if (c === "group") return "👥";
+  if (c === "ia et chat-bot" || c === "") return "🤖";
 
-  if (c === "bug") return "🐞";
+  if (c === "religion") return "📖";
 
-  if (c === "tags") return "🏷️";
+  if (c === "jeu et autres" || c === "") return "🎮";
 
-  if (c === "moderation") return "😶‍🌫️";
+  if (c === "" || c === "gc-menu") return "👥";
 
-  if (c === "owner") return "✨";
+  if (c === "bot-menu") return "🌹";
 
-  if (c === "creator") return "👑";
+  if (c === "langues et études" || c === "") return "🌐";
 
-  if (c === "premium") return "💫";
+  if (c === "media") return "📁";
 
-  return "🎯"; 
+  if (c === "histoire et citation" || c === "") return "🍒";
+
+  if (c === "anime-manga" || c === "") return "🇯🇵";
+
+  
+
+  return "📖"; 
 
 }
 
-function getCategoryBorder(category) {
+function getCategoryTitle(category) {
 
   const c = category.toLowerCase();
 
-  if (c === "moderation") return "🛡️ MODERATION 🛡️";
+  if (c === "premium") return "PREMIUM";
 
-  if (c === "premium") return "💎 PREMIUM 💎";
+  if (c === "ia") return "IA & CHATBOT";
 
-  if (c === "owner") return "👑 OWNER 👑";
+  if (c === "chatbot") return "IA & CHATBOT";
 
-  if (c === "creator") return "⭐ CREATOR ⭐";
+  if (c === "religion") return "RELIGION";
 
-  if (c === "utils") return "🔧 UTILS 🔧";
+  if (c === "jeu") return "JEUX & AUTRES";
 
-  if (c === "media") return "🎬 MEDIA 🎬";
+  if (c === "jeux") return "JEUX & AUTRES";
 
-  if (c === "group") return "👥 GROUP 👥";
+  if (c === "group") return "GC-MENU";
 
-  if (c === "bug") return "🐛 BUG 🐛";
+  if (c === "gc-menu") return "GC-MENU";
 
-  if (c === "tags") return "🏷️ TAGS 🏷️";
+  if (c === "bot-menu") return "BOT-MENU";
 
-  return "🎯 " + category.toUpperCase() + " 🎯";
+  if (c === "langues") return "LANGUES & ÉTUDES";
+
+  if (c === "etudes") return "LANGUES & ÉTUDES";
+
+  if (c === "media") return "MEDIA";
+
+  if (c === "histoire") return "HISTOIRES & CITATIONS";
+
+  if (c === "citation") return "HISTOIRES & CITATIONS";
+
+  if (c === "anime") return "ANIME-MANGA";
+
+  if (c === "manga") return "ANIME-MANGA";
+
+  return category.toUpperCase();
 
 }
 
@@ -136,85 +156,62 @@ export default async function info(client, message) {
 
     }
 
-    // 🎯 BANNIÈRE PRINCIPALE (plus équilibrée)
+    // 🎯 MENU PRINCIPAL
 
     let menu = 
 
-"╔══════════════════════╗\n" +
+`────────────
+*AKANE MD 🍉*
+────────────
 
-"║      *AKANE MD*      ║\n" +
+*👤 UTILISATEUR  :* ${stylizedChar(userName)}
 
-"╚══════════════════════╝\n\n" +
+*🔰 PREFIXE :* *${prefix}*
 
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+*📦 VERSION :* *1.0.0*
 
-`👤 UTILISATEUR  : ${stylizedChar(userName)}\n` +
+*⏱️ UPTIME :* *${uptime}*
 
-`🔰 PREFIXE      : ${prefix}\n` +
+*💾 RAM :* *${usedRam}/${totalRam} MB*
 
-`📦 VERSION      : 1.0.0\n` +
+*💻 PLATEFORME :* *${platform}*
 
-`⏱️ UPTIME       : ${uptime}\n` +
+*📅 DATE :* *${day}* *${date}*
 
-`💾 RAM          : ${usedRam}/${totalRam} MB\n` +
+`;
 
-`💻 PLATEFORME   : ${platform}\n` +
-
-`📅 DATE         : ${day} ${date}\n\n` +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n";
-
-    // Ajout des catégories avec bordures stylisées (corrigées)
+    // Ajout des catégories avec CADRES
 
     for (const [category, commands] of Object.entries(categories)) {
 
       const icon = getCategoryIcon(category);
 
-      const border = getCategoryBorder(category);
+      const title = getCategoryTitle(category);
 
       
 
-      // Titre de catégorie avec bordure (sans répétition d'icône)
+      menu += `┌────────────────────┐\n`;
 
-      menu += `╭── ${icon} ${border} ──╮\n`;
+      menu += `│  ${icon} ${title}  \n`;
 
-      menu += `│\n`;
+      menu += `├────────────────────┤\n`;
 
       
-
-      // Commandes en minuscules originales (pas en majuscules forcées)
 
       commands.forEach(cmd => {
 
-        menu += `│   ✦ ${stylizedChar(cmd)}\n`;
+        menu += `│  ✦ ${stylizedChar(cmd.toUpperCase())}  \n`;
 
       });
 
       
 
-      menu += `╰───────────────────╯\n\n`;
-
+      menu += `└────────────────────┘\n\n`;
     }
-
-    // FOOTER avec DEV et COPYRIGHT (simplifié et élégant)
-
-    menu += 
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-"╭─────────────────────╮\n" +
-
-"│     👨‍💻 DEV INFO     │\n" +
-
-"╰─────────────────────╯\n" +
-
-`✦ 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹\n\n` +
-
-"╭─────────────────────╮\n" +
-
-"│    © AKANE-MD 🌹    │\n" +
-
-"╰─────────────────────╯";
+  // FOOTER
+      menu += `
+> *DEV : 🍁AKANE ʕ◕ᴥ◕ʔ🌹*
+> *© AKANE-MD 🌹*`;
 
     try {
 
