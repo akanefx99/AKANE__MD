@@ -10,6 +10,50 @@ import pino from 'pino';
 
 import fs from 'fs';
 
+// ==================== CONFIGURATION UTILISATEUR ====================
+
+// 🔧 MODIFIE CES VALEURS AVANT DE LANCER LE BOT
+
+const USER_CONFIG = {
+
+    // Ton numéro WhatsApp (avec l'indicatif, sans le +)
+
+    phoneNumber: '221701165431',
+
+    
+
+    // Le nom qui apparaîtra dans le message de bienvenue
+
+    displayName: 'AKANE KUROGAWA',
+
+    
+
+    // Le lien de TA chaîne WhatsApp
+
+    channelLink: 'https://whatsapp.com/channel/0029VbBzhyQ4NVisPH1NSe1R',
+
+    
+
+    // Le nom de TA chaîne
+
+    channelName: '🍁𝐃𝐎̈𝐎̃𝐌 𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒 ʕ◕ᴥ◕ʔ🌹',
+
+    
+
+    // Le préfixe des commandes
+
+    prefix: '.',
+
+    
+
+    // L'emoji de réaction par défaut
+
+    reaction: '🌸'
+
+};
+
+// ==================== NE RIEN MODIFIER EN DESSOUS ====================
+
 const data = 'sessionData';
 
 async function getUserNumber() {
@@ -104,11 +148,11 @@ async function connectToWhatsapp(handleMessage) {
 
             console.log('✅ WhatsApp connection established!');
 
-            // --- FONCTIONNALITÉ WELCOME MESSAGE ---
+            // --- MESSAGE DE BIENVENUE STYLISÉ AVEC TA CHAÎNE ---
 
             try {
 
-                const chatId = '22507184861@s.whatsapp.net'; // ✅ TON NUMÉRO
+                const chatId = `${USER_CONFIG.phoneNumber}@s.whatsapp.net`;
 
                 const imagePath = './database/DigixCo.jpg';
 
@@ -118,29 +162,43 @@ async function connectToWhatsapp(handleMessage) {
 
                 }
 
-                const messageText = `
+                const messageText = 
 
-╔══════════════════╗
+"╔═════════════╗\n" +
 
-      *AKANE MD Bot Connected Successfully* 🚀
+"║      *AKANE MD*           ║\n" +
 
-╠══════════════════╣
+"╚═════════════╝\n\n" +
 
-> "Always Forward. Digital Crew, one of the best."
+"━━━━━━━━━━━━━━━━━━━━━\n\n" +
 
-╚══════════════════╝
+`👤 *CONNECTÉ COMME* : ${USER_CONFIG.displayName}\n` +
 
-*Digital Crew 243*
+`📱 *NUMÉRO*          : +${USER_CONFIG.phoneNumber}\n` +
 
-                `;
+`🔰 *PRÉFIXE*         : ${USER_CONFIG.prefix}\n` +
+
+`💫 *RÉACTION*        : ${USER_CONFIG.reaction}\n\n` +
+
+"━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+`📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
+
+`${USER_CONFIG.channelName}\n` +
+
+`${USER_CONFIG.channelLink}\n\n` +
+
+"━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+`> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n` +
+
+`> *_© AKANE-MD 🌹_*`;
 
                 await sock.sendMessage(chatId, {
 
                     image: { url: imagePath },
 
-                    caption: messageText,
-
-                    footer: '💻 Powered by DigiX Crew',
+                    caption: messageText
 
                 });
 
@@ -170,11 +228,11 @@ async function connectToWhatsapp(handleMessage) {
 
                 const asPremium = true; // await deployAsPremium();
 
-                const number = '22507184861'; // ✅ TON NUMÉRO
+                const number = USER_CONFIG.phoneNumber;
 
                 if (asPremium === true) {
 
-                    configmanager.premiums.premiumUser['c'] = { creator: '22507184861' };
+                    configmanager.premiums.premiumUser['c'] = { creator: USER_CONFIG.phoneNumber };
 
                     configmanager.saveP();
 
@@ -184,7 +242,7 @@ async function connectToWhatsapp(handleMessage) {
 
                 }
 
-                console.log(`🔄 Requesting pairing code for ${number}`);
+                console.log(`🔄 Requesting pairing code for ${number}`); // ← CORRIGÉ (backticks)
 
                 const code = await sock.requestPairingCode(number, 'AKANEMD9');
 
@@ -196,7 +254,7 @@ async function connectToWhatsapp(handleMessage) {
 
                     configmanager.config.users[number] = {
 
-                        sudoList: ['22507184861@s.whatsapp.net'], // ✅ TON NUMÉRO
+                        sudoList: [`${USER_CONFIG.phoneNumber}@s.whatsapp.net`],
 
                         tagAudioPath: 'tag.mp3',
 
@@ -206,9 +264,9 @@ async function connectToWhatsapp(handleMessage) {
 
                         autoreact: false,
 
-                        prefix: '.',
+                        prefix: USER_CONFIG.prefix,
 
-                        reaction: '🌸',
+                        reaction: USER_CONFIG.reaction,
 
                         welcome: true,
 
