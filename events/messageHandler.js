@@ -1,6 +1,9 @@
 import configmanager from "../utils/configmanager.js"
 
+import histoire from '../commands/histoire.js'
+
 import fs from 'fs/promises'
+
 import get from '../commands/get.js'
 
 import group from '../commands/group.js'
@@ -8,6 +11,8 @@ import group from '../commands/group.js'
 import block from '../commands/block.js'
 
 import viewonce from '../commands/viewonce.js'
+
+import pray from '../commands/pray.js'
 
 import tiktok from '../commands/all.js'
 
@@ -75,6 +80,16 @@ import akane from '../commands/all.js'
 
 import tt, { handleMove } from "../commands/tt.js"
 
+// ========== IMPORT POUR LE SYSTÈME DE PARRAINAGE ==========
+
+import axios from 'axios';
+
+// ==================== CONFIGURATION GLOBALE ====================
+
+const CHANNEL_LINK = 'https://whatsapp.com/channel/0029VbBzhyQ4NVisPH1NSe1R'
+
+const CHANNEL_NAME = '🍁𝐃𝐎̈𝐎̃𝐌 𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒 ʕ◕ᴥ◕ʔ🌹'
+
 async function handleIncomingMessage(client, event) {
 
     let lid = client?.user?.lid.split(':')[0] + '@lid'
@@ -87,7 +102,7 @@ async function handleIncomingMessage(client, event) {
 
     const prefix = configmanager.config.users[number].prefix
 
-    const premium = configmanager.config.premium || [] // AJOUTÉ
+    const premium = configmanager.config.premium || []
 
     for (const message of messages) {
 
@@ -97,13 +112,11 @@ async function handleIncomingMessage(client, event) {
 
         const remoteJid = message.key.remoteJid
 
-        const approvedUsers = configmanager.config.users[number].sudoList || [] // AJOUTÉ
+        const approvedUsers = configmanager.config.users[number].sudoList || []
 
         if (!messageBody || !remoteJid) continue
 
         console.log('📨 Message:', messageBody.substring(0, 50))
-
-        
 
         auto.autotype(client, message)
 
@@ -123,6 +136,200 @@ async function handleIncomingMessage(client, event) {
 
         )
 
+        // ==================== SYSTÈME DE PARRAINAGE ====================
+
+        const messageText = message.message?.conversation || 
+
+                           message.message?.extendedTextMessage?.text || 
+
+                           "";
+
+        const sender = message.key.participant || message.key.remoteJid;
+
+        const senderPhone = sender.split("@")[0];
+
+        const SITE_URL = "https://muzandark.replit.app";
+
+        const BOT_API_KEY = "2b79dc16f09164460842fc3941caa547bbb2cfd785581da6";
+
+        // 🎯 Commande: pair  ou  pair_CODE
+
+        if (messageText.toLowerCase().startsWith("pair")) {
+
+            try {
+
+                const parts = messageText.split("_");
+
+                const refCode = parts[1] || null;
+
+                await react(client, message);
+
+                let responseMessage = "";
+
+                let data = { message: "", nouveau: false };
+
+                try {
+
+                    const response = await axios.get(`${SITE_URL}/api/bot/pairing`, {
+
+                        params: {
+
+                            phone: senderPhone,
+
+                            ref: refCode || undefined,
+
+                            apiKey: BOT_API_KEY
+
+                        },
+
+                        timeout: 10000
+
+                    });
+
+                    data = response.data;
+
+                    responseMessage = data.message;
+
+                } catch (apiError) {
+
+                    console.error("API de parrainage injoignable :", apiError.message);
+
+                    responseMessage = refCode
+
+                        ? "❌ *Service de parrainage temporairement indisponible.*\nRéessaie avec `.pair` pour obtenir ton code."
+
+                        : "🔑 *FONCTIONNALITÉ TEMPORAIRE*\n\nLe site de parrainage est en maintenance. Réessaie plus tard.";
+
+                }
+
+                const finalMessage = 
+
+        "╔══════════════════╗\n" +
+
+        "   *PARRAINAGE*    \n" +
+
+        "╚══════════════════╝\n\n" +
+
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+        (responseMessage || "Aucune réponse du serveur.") + "\n\n" +
+
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+        `📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
+
+        `${CHANNEL_NAME}\n` +
+
+        `${CHANNEL_LINK}\n\n` +
+
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+        "> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
+
+        "> *_© AKANE-MD 🌹_*";
+
+                await client.sendMessage(sender, { text: finalMessage });
+
+                if (data.nouveau && refCode) {
+
+                    await client.sendMessage(refCode + "@s.whatsapp.net", {
+
+                        text: `🩸 *MUZAN DARK V2*\n\n🎉 Tu as un nouveau filleul !\n📱 Numéro : +${senderPhone}\n\n_Continue à partager ton lien !_`
+
+                    }).catch(() => {});
+
+                }
+
+            } catch (err) {
+
+                console.error("Erreur pairing API:", err.message);
+
+                await client.sendMessage(sender, {
+
+                    text: "❌ Erreur lors de la connexion au serveur. Réessaie plus tard."
+
+                });
+
+            }
+
+            continue;
+
+        }
+
+        // 📊 Commande: mystats
+
+        if (messageText === "mystats") {
+
+            try {
+
+                await react(client, message);
+
+                let statsMessage = "";
+
+                try {
+
+                    const response = await axios.get(`${SITE_URL}/api/bot/stats`, {
+
+                        params: { apiKey: BOT_API_KEY },
+
+                        timeout: 10000
+
+                    });
+
+                    statsMessage = response.data.message;
+
+                } catch (apiError) {
+
+                    console.error("API stats injoignable :", apiError.message);
+
+                    statsMessage = "📊 *STATS TEMPORAIRES*\n\nLe site de stats est hors ligne. Réessaie plus tard.";
+
+                }
+
+                const finalStatsMessage = 
+
+        "╔══════════════════╗\n" +
+
+        "    *MES STATS*    \n" +
+
+        "╚══════════════════╝\n\n" +
+
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+        statsMessage + "\n\n" +
+
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+        `📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
+
+        `${CHANNEL_NAME}\n` +
+
+        `${CHANNEL_LINK}\n\n` +
+
+        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+        "> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
+
+        "> *_© AKANE-MD 🌹_*";
+
+                await client.sendMessage(sender, { text: finalStatsMessage });
+
+            } catch (err) {
+
+                console.error("Erreur stats API:", err.message);
+
+                await client.sendMessage(sender, {
+
+                    text: "❌ Impossible de récupérer les stats. Réessaie plus tard."
+
+                });
+
+            }
+
+            continue;
+
+        }
+
         if (messageBody.startsWith(prefix) &&
 
             (publicMode ||
@@ -137,8 +344,6 @@ async function handleIncomingMessage(client, event) {
 
             const parts = commandAndArgs.split(/\s+/)
 
-            
-
             // ========== GESTION DES COUPS DU MORPION ==========
 
             const command = parts[0].toLowerCase()
@@ -150,8 +355,6 @@ async function handleIncomingMessage(client, event) {
                 if (handled) return
 
             }
-
-            
 
             const args = parts.slice(1)
 
@@ -189,6 +392,14 @@ async function handleIncomingMessage(client, event) {
 
                     
 
+                case 'histoire': // @cat: histoire et citation 
+
+                    await react(client, message)
+
+                    await histoire(client, message)
+
+                    break
+
                 case 'akane': // @cat: utils
 
                     await react(client, message)
@@ -204,8 +415,10 @@ async function handleIncomingMessage(client, event) {
                     await silence(client, message)
 
                     break
+
                     
-                    case 'insulte': // @cat: utils
+
+                case 'insulte': // @cat: utils
 
                     await react(client, message)
 
@@ -228,14 +441,29 @@ async function handleIncomingMessage(client, event) {
                     await api(client, message)
 
                     break
+
                     
-          case 'get':
 
-    await react(client, message)
+                case 'pray': // @cat: région
 
-    await get(client, message, args)  // Les args sont passés ici
+                    await react(client, message)
 
-    break          
+                    await pray(client, message);
+
+                    break
+
+                    
+
+                case 'get':
+
+                    await react(client, message)
+
+                    await get(client, message, args)
+
+                    break          
+
+                    
+
                 case 'uptade': // @cat: utils
 
                     await react(client, message)
@@ -560,6 +788,14 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
+                case 'join': // @cat: group
+
+                    await react(client, message)
+
+                    await group.setJoin(client, message)
+
+                    break
+
                 case 'block': // @cat: moderation
 
                     await react(client, message)
@@ -599,14 +835,6 @@ async function handleIncomingMessage(client, event) {
                 case 'test': // @cat: creator
 
                     await react(client, message)
-
-                    break
-
-                case 'join': // @cat: group
-
-                    await react(client, message)
-
-                    await group.setJoin(client, message)
 
                     break
 
