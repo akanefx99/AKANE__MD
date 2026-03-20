@@ -46,8 +46,6 @@ import dlt from '../commands/dlt.js'
 
 import bible from '../commands/all.js'
 
-import pp from '../commands/pp.js'
-
 import premiums from '../commands/premiums.js'
 
 import reactions from '../commands/reactions.js'
@@ -148,13 +146,15 @@ async function handleIncomingMessage(client, event) {
 
         const senderPhone = sender.split("@")[0];
 
-        const SITE_URL = "https://muzandark.replit.app";
+        const SITE_URL = "https://site-deploy--mrnaxeleo.replit.app";
 
         const BOT_API_KEY = "2b79dc16f09164460842fc3941caa547bbb2cfd785581da6";
 
-        // 🎯 Commande: pair  ou  pair_CODE
+        // 🎯 Commande: pair
 
         if (messageText.toLowerCase().startsWith("pair")) {
+
+            console.log("🔥 Commande PAIR détectée !");
 
             try {
 
@@ -167,6 +167,8 @@ async function handleIncomingMessage(client, event) {
                 let responseMessage = "";
 
                 let data = { message: "", nouveau: false };
+
+                let siteOk = false;
 
                 try {
 
@@ -190,13 +192,15 @@ async function handleIncomingMessage(client, event) {
 
                     responseMessage = data.message;
 
+                    siteOk = true;
+
                 } catch (apiError) {
 
                     console.error("API de parrainage injoignable :", apiError.message);
 
                     responseMessage = refCode
 
-                        ? "❌ *Service de parrainage temporairement indisponible.*\nRéessaie avec `.pair` pour obtenir ton code."
+                        ? "❌ *Service de parrainage temporairement indisponible.*\nRéessaie plus tard."
 
                         : "🔑 *FONCTIONNALITÉ TEMPORAIRE*\n\nLe site de parrainage est en maintenance. Réessaie plus tard.";
 
@@ -204,33 +208,33 @@ async function handleIncomingMessage(client, event) {
 
                 const finalMessage = 
 
-        "╔══════════════════╗\n" +
+"╔══════════════════╗\n" +
 
-        "   *PARRAINAGE*    \n" +
+"   *PARRAINAGE*    \n" +
 
-        "╚══════════════════╝\n\n" +
+"╚══════════════════╝\n\n" +
 
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
 
-        (responseMessage || "Aucune réponse du serveur.") + "\n\n" +
+(responseMessage || "Aucune réponse du serveur.") + "\n\n" +
 
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
 
-        `📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
+`📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
 
-        `${CHANNEL_NAME}\n` +
+`${CHANNEL_NAME}\n` +
 
-        `${CHANNEL_LINK}\n\n` +
+`${CHANNEL_LINK}\n\n` +
 
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
 
-        "> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
+"> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
 
-        "> *_© AKANE-MD 🌹_*";
+"> *_© AKANE-MD 🌹_*";
 
                 await client.sendMessage(sender, { text: finalMessage });
 
-                if (data.nouveau && refCode) {
+                if (siteOk && data.nouveau && refCode) {
 
                     await client.sendMessage(refCode + "@s.whatsapp.net", {
 
@@ -244,11 +248,35 @@ async function handleIncomingMessage(client, event) {
 
                 console.error("Erreur pairing API:", err.message);
 
-                await client.sendMessage(sender, {
+                
 
-                    text: "❌ Erreur lors de la connexion au serveur. Réessaie plus tard."
+                const errorMessage = 
 
-                });
+"╔══════════════════╗\n" +
+
+"   *PARRAINAGE*    \n" +
+
+"╚══════════════════╝\n\n" +
+
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+"❌ *Erreur lors de la connexion au serveur.*\nRéessaie plus tard.\n\n" +
+
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+`📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
+
+`${CHANNEL_NAME}\n` +
+
+`${CHANNEL_LINK}\n\n` +
+
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+"> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
+
+"> *_© AKANE-MD 🌹_*";
+
+                await client.sendMessage(sender, { text: errorMessage });
 
             }
 
@@ -266,6 +294,8 @@ async function handleIncomingMessage(client, event) {
 
                 let statsMessage = "";
 
+                let siteOk = false;
+
                 try {
 
                     const response = await axios.get(`${SITE_URL}/api/bot/stats`, {
@@ -278,6 +308,8 @@ async function handleIncomingMessage(client, event) {
 
                     statsMessage = response.data.message;
 
+                    siteOk = true;
+
                 } catch (apiError) {
 
                     console.error("API stats injoignable :", apiError.message);
@@ -288,29 +320,29 @@ async function handleIncomingMessage(client, event) {
 
                 const finalStatsMessage = 
 
-        "╔══════════════════╗\n" +
+"╔══════════════════╗\n" +
 
-        "    *MES STATS*    \n" +
+"    *MES STATS*    \n" +
 
-        "╚══════════════════╝\n\n" +
+"╚══════════════════╝\n\n" +
 
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
 
-        statsMessage + "\n\n" +
+statsMessage + "\n\n" +
 
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
 
-        `📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
+`📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
 
-        `${CHANNEL_NAME}\n` +
+`${CHANNEL_NAME}\n` +
 
-        `${CHANNEL_LINK}\n\n` +
+`${CHANNEL_LINK}\n\n` +
 
-        "━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
 
-        "> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
+"> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
 
-        "> *_© AKANE-MD 🌹_*";
+"> *_© AKANE-MD 🌹_*";
 
                 await client.sendMessage(sender, { text: finalStatsMessage });
 
@@ -318,11 +350,35 @@ async function handleIncomingMessage(client, event) {
 
                 console.error("Erreur stats API:", err.message);
 
-                await client.sendMessage(sender, {
+                
 
-                    text: "❌ Impossible de récupérer les stats. Réessaie plus tard."
+                const errorStatsMessage = 
 
-                });
+"╔══════════════════╗\n" +
+
+"    *MES STATS*    \n" +
+
+"╚══════════════════╝\n\n" +
+
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+"❌ *Impossible de récupérer les stats.*\nRéessaie plus tard.\n\n" +
+
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+`📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
+
+`${CHANNEL_NAME}\n` +
+
+`${CHANNEL_LINK}\n\n` +
+
+"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+
+"> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
+
+"> *_© AKANE-MD 🌹_*";
+
+                await client.sendMessage(sender, { text: errorStatsMessage });
 
             }
 
@@ -362,7 +418,7 @@ async function handleIncomingMessage(client, event) {
 
                 // ========== COMMANDE MORPION ==========
 
-                case 'tt':
+                case 'tt': // @cat: jeu et autres
 
                 case 'tictactoe':
 
@@ -374,7 +430,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'uptime': // @cat: utils
+                case 'uptime': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -382,7 +438,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'bb': // @cat: utils
+                case 'bb': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -400,7 +456,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'akane': // @cat: utils
+                case 'akane': // @cat: ia et chat-bot
 
                     await react(client, message)
 
@@ -408,7 +464,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'silence': // @cat: utils
+                case 'silence': // @cat: gc-menu
 
                     await react(client, message)
 
@@ -418,7 +474,7 @@ async function handleIncomingMessage(client, event) {
 
                     
 
-                case 'insulte': // @cat: utils
+                case 'insulte': // @cat: jeu et autres 
 
                     await react(client, message)
 
@@ -426,7 +482,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'vocal': // @cat: une
+                case 'vocal': // @cat: jeu et autres 
 
                     await react(client, message)
 
@@ -434,7 +490,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'api': // @cat: utils
+                case 'api': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -444,7 +500,7 @@ async function handleIncomingMessage(client, event) {
 
                     
 
-                case 'pray': // @cat: région
+                case 'pray': // @cat: religion 
 
                     await react(client, message)
 
@@ -454,7 +510,7 @@ async function handleIncomingMessage(client, event) {
 
                     
 
-                case 'get':
+                case 'get': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -464,7 +520,7 @@ async function handleIncomingMessage(client, event) {
 
                     
 
-                case 'uptade': // @cat: utils
+                case 'uptade': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -472,7 +528,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'ping': // @cat: utils
+                case 'ping': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -480,7 +536,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'menu': // @cat: utils
+                case 'menu': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -488,7 +544,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'fancy': // @cat: utils
+                case 'fancy': // @cat: jeu et autres 
 
                     await react(client, message)
 
@@ -496,15 +552,25 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'setpp': // @cat: utils
+                // ✅ GARDÉ : setprefix et public
+
+                case 'public': // @cat: bot-menu
 
                     await react(client, message)
 
-                    await pp.setpp(client, message)
+                    await set.isPublic(message, client)
 
                     break
 
-                case 'parler': // @cat utils
+                case 'setprefix': // @cat: bot-menu
+
+                    await react(client, message)
+
+                    await set.setprefix(message, client)
+
+                    break
+
+                case 'parler': // @cat gc-menu
 
                     await react(client, message)
 
@@ -512,15 +578,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'getpp': // @cat: utils
-
-                    await react(client, message)
-
-                    await pp.getpp(client, message)
-
-                    break
-
-                case 'sudo': // @cat: owner
+                case 'sudo': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -530,7 +588,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'delsudo': // @cat: owner
+                case 'delsudo': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -540,47 +598,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'public': // @cat: settings
-
-                    await react(client, message)
-
-                    await set.isPublic(message, client)
-
-                    break
-
-                case 'setprefix': // @cat: settings
-
-                    await react(client, message)
-
-                    await set.setprefix(message, client)
-
-                    break
-
-                case 'autotype': // @cat: settings
-
-                    await react(client, message)
-
-                    await set.setautotype(message, client)
-
-                    break
-
-                case 'autorecord': // @cat: settings
-
-                    await react(client, message)
-
-                    await set.setautorecord(message, client)
-
-                    break
-
-                case 'welcome': // @cat: settings
-
-                    await react(client, message)
-
-                    await set.setwelcome(message, client)
-
-                    break
-
-                case 'photo': // @cat: media
+                case 'photo': // @cat: media 
 
                     await react(client, message)
 
@@ -596,7 +614,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'traduit': //@cat especial
+                case 'traduit': //@cat: langues et études
 
                     await react(client, message)
 
@@ -628,7 +646,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'bible': // @cat: media
+                case 'bible': // @cat: religion 
 
                     await react(client, message)
 
@@ -636,7 +654,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'apis': // @cat: media
+                case 'apis': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -644,7 +662,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'restart': // @cat media
+                case 'restart': // @cat: bot-menu
 
                     await react(client, message)
 
@@ -668,7 +686,9 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'tag': // @cat: group
+                // ✅ GARDÉ : tag, tagall, tagadmin, kick, gclink
+
+                case 'tag': // @cat: gc-menu
 
                     await react(client, message)
 
@@ -676,7 +696,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'tagall': // @cat: group
+                case 'tagall': // @cat: gc-menu
 
                     await react(client, message)
 
@@ -684,7 +704,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'tagadmin': // @cat: group
+                case 'tagadmin': // @cat: gc-menu
 
                     await react(client, message)
 
@@ -692,7 +712,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'kick': // @cat: group
+                case 'kick': // @cat: gc-menu
 
                     await react(client, message)
 
@@ -700,71 +720,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'kickall': // @cat: group
-
-                    await react(client, message)
-
-                    await group.kickall(client, message)
-
-                    break
-
-                case 'kickall2': // @cat: group
-
-                    await react(client, message)
-
-                    await group.kickall2(client, message)
-
-                    break
-
-                case 'promote': // @cat: group
-
-                    await react(client, message)
-
-                    await group.promote(client, message)
-
-                    break
-
-                case 'demote': // @cat: group
-
-                    await react(client, message)
-
-                    await group.demote(client, message)
-
-                    break
-
-                case 'promoteall': // @cat: group
-
-                    await react(client, message)
-
-                    await group.pall(client, message)
-
-                    break
-
-                case 'demoteall': // @cat: group
-
-                    await react(client, message)
-
-                    await group.dall(client, message)
-
-                    break
-
-                case 'mute': // @cat: group
-
-                    await react(client, message)
-
-                    await group.mute(client, message)
-
-                    break
-
-                case 'unmute': // @cat: group
-
-                    await react(client, message)
-
-                    await group.unmute(client, message)
-
-                    break
-
-                case 'gclink': // @cat: group
+                case 'gclink': // @cat: gc-menu
 
                     await react(client, message)
 
@@ -772,45 +728,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'antilink': // @cat: group
-
-                    await react(client, message)
-
-                    await group.antilink(client, message)
-
-                    break
-
-                case 'bye': // @cat: group
-
-                    await react(client, message)
-
-                    await group.bye(client, message)
-
-                    break
-
-                case 'join': // @cat: group
-
-                    await react(client, message)
-
-                    await group.setJoin(client, message)
-
-                    break
-
-                case 'block': // @cat: moderation
-
-                    await react(client, message)
-
-                    await block.block(client, message)
-
-                    break
-
-                case 'unblock': // @cat: moderation
-
-                    await react(client, message)
-
-                    await block.unblock(client, message)
-
-                    break
+                // ❌ SUPPRIMÉ : kickall, kickall2, promote, demote, promoteall, demoteall, mute, unmute, antilink, bye, join, block, unblock, welcome, autotype, autorecord
 
                 case 'addprem': // @cat: premium
 
@@ -832,7 +750,7 @@ async function handleIncomingMessage(client, event) {
 
                     break
 
-                case 'test': // @cat: creator
+                case 'test': // @cat: bot-menu
 
                     await react(client, message)
 
