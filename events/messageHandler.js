@@ -11,7 +11,6 @@ import group from '../commands/group.js'
 import block from '../commands/block.js'
 
 import viewonce from '../commands/viewonce.js'
-import akanes from '../commands/akanes.js'
 
 import pray from '../commands/pray.js'
 
@@ -30,8 +29,6 @@ import traduit from '../commands/traduit.js'
 import restart from '../commands/restart.js'
 
 import silence from '../commands/silence.js'
-
-import api from '../commands/api.js'
 
 import uptade from '../commands/uptade.js'
 
@@ -70,10 +67,6 @@ import uptime from '../commands/uptime.js'
 import bb from '../commands/bb.js'
 
 import insulte from '../commands/insulte.js'
-
-import apis from '../commands/apis.js'
-
-import akane from '../commands/akane.js'
 
 // ========== IMPORT DU JEU MORPION ==========
 
