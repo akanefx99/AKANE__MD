@@ -11,26 +11,27 @@ import group from '../commands/group.js'
 import block from '../commands/block.js'
 
 import viewonce from '../commands/viewonce.js'
+import akanes from '../commands/akanes.js'
 
 import pray from '../commands/pray.js'
 
-import tiktok from '../commands/all.js'
+import tiktok from '../commands/tiktok.js'
 
 import sudo from '../commands/sudo.js'
 
 import tag from '../commands/tag.js'
 
-import parler from '../commands/all.js'
+import parler from '../commands/parler.js'
 
 import sticker from '../commands/sticker.js'
 
-import traduit from '../commands/all.js'
+import traduit from '../commands/traduit.js'
 
-import restart from '../commands/all.js'
+import restart from '../commands/restart.js'
 
-import silence from '../commands/all.js'
+import silence from '../commands/silence.js'
 
-import api from '../commands/all.js'
+import api from '../commands/api.js'
 
 import uptade from '../commands/uptade.js'
 
@@ -44,7 +45,7 @@ import sender from '../commands/sender.js'
 
 import dlt from '../commands/dlt.js'
 
-import bible from '../commands/all.js'
+import bible from '../commands/bible.js'
 
 import premiums from '../commands/premiums.js'
 
@@ -68,11 +69,11 @@ import uptime from '../commands/uptime.js'
 
 import bb from '../commands/bb.js'
 
-import insults from '../commands/all.js'
+import insulte from '../commands/insulte.js'
 
-import apis from '../commands/all.js'
+import apis from '../commands/apis.js'
 
-import akane from '../commands/all.js'
+import akane from '../commands/akane.js'
 
 // ========== IMPORT DU JEU MORPION ==========
 
@@ -620,6 +621,10 @@ statsMessage + "\n\n" +
 
                     await traduit(client, message)
 
+                    break
+                    case 'akanes': // @cat: ia et chat-bot
+                    await react (client, message)
+                    await akanes(client, message)
                     break
 
                 case 'sticker': // @cat: media
