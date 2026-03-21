@@ -6,21 +6,21 @@ const CHANNEL_LINK = 'https://whatsapp.com/channel/0029VbBzhyQ4NVisPH1NSe1R';
 
 const waitingMessages = [
 
-    "馃挄 *Je r茅fl茅chis 脿 ta question, mon amour...*",
+    "💕 *Je réfléchis à ta question, mon amour...*",
 
-    "馃尭 *Un instant, je veux te r茅pondre parfaitement...*",
+    "🌸 *Un instant, je veux te répondre parfaitement...*",
 
-    "鉁� *Je suis en train de pr茅parer une belle r茅ponse pour toi...*",
+    "✨ *Je suis en train de préparer une belle réponse pour toi...*",
 
-    "馃挱 *Je pense 脿 toi, laisse-moi juste une seconde...*",
+    "💭 *Je pense à toi, laisse-moi juste une seconde...*",
 
-    "馃グ *Ta question me touche, je te r茅ponds tout de suite...*",
+    "🥰 *Ta question me touche, je te réponds tout de suite...*",
 
-    "馃挅 *Pour toi mon c艙ur, je prends le temps de bien r茅pondre...*",
+    "💖 *Pour toi mon cœur, je prends le temps de bien répondre...*",
 
-    "馃尮 *Attends un peu mon ch茅ri/ma ch茅rie...*",
+    "🌹 *Attends un peu mon chéri/ma chérie...*",
 
-    "馃挮 *Je suis l脿, je r茅fl茅chis 脿 la meilleure r茅ponse...*"
+    "💫 *Je suis là, je réfléchis à la meilleure réponse...*"
 
 ];
 
@@ -28,25 +28,25 @@ function convertToBold(text) {
 
     const boldMap = {
 
-        'A': '饾棓', 'B': '饾棔', 'C': '饾棖', 'D': '饾棗', 'E': '饾棙', 'F': '饾棛', 'G': '饾棜',
+        'A': '𝗔', 'B': '𝗕', 'C': '𝗖', 'D': '𝗗', 'E': '𝗘', 'F': '𝗙', 'G': '𝗚',
 
-        'H': '饾棝', 'I': '饾棞', 'J': '饾棟', 'K': '饾棡', 'L': '饾棢', 'M': '饾棤', 'N': '饾棥',
+        'H': '𝗛', 'I': '𝗜', 'J': '𝗝', 'K': '𝗞', 'L': '𝗟', 'M': '𝗠', 'N': '𝗡',
 
-        'O': '饾棦', 'P': '饾棧', 'Q': '饾棨', 'R': '饾棩', 'S': '饾棪', 'T': '饾棫', 'U': '饾棬',
+        'O': '𝗢', 'P': '𝗣', 'Q': '𝗤', 'R': '𝗥', 'S': '𝗦', 'T': '𝗧', 'U': '𝗨',
 
-        'V': '饾棭', 'W': '饾棯', 'X': '饾棲', 'Y': '饾棳', 'Z': '饾棴',
+        'V': '𝗩', 'W': '𝗪', 'X': '𝗫', 'Y': '𝗬', 'Z': '𝗭',
 
-        'a': '饾棶', 'b': '饾棷', 'c': '饾棸', 'd': '饾棻', 'e': '饾棽', 'f': '饾棾', 'g': '饾棿',
+        'a': '𝗮', 'b': '𝗯', 'c': '𝗰', 'd': '𝗱', 'e': '𝗲', 'f': '𝗳', 'g': '𝗴',
 
-        'h': '饾椀', 'i': '饾椂', 'j': '饾椃', 'k': '饾椄', 'l': '饾椆', 'm': '饾椇', 'n': '饾椈',
+        'h': '𝗵', 'i': '𝗶', 'j': '𝗷', 'k': '𝗸', 'l': '𝗹', 'm': '𝗺', 'n': '𝗻',
 
-        'o': '饾椉', 'p': '饾椊', 'q': '饾椌', 'r': '饾椏', 's': '饾榾', 't': '饾榿', 'u': '饾槀',
+        'o': '𝗼', 'p': '𝗽', 'q': '𝗾', 'r': '𝗿', 's': '𝘀', 't': '𝘁', 'u': '𝘂',
 
-        'v': '饾槂', 'w': '饾槃', 'x': '饾槄', 'y': '饾槅', 'z': '饾槆',
+        'v': '𝘃', 'w': '𝘄', 'x': '𝘅', 'y': '𝘆', 'z': '𝘇',
 
-        '0': '饾煬', '1': '饾煭', '2': '饾煯', '3': '饾煰', '4': '饾煱', '5': '饾煴',
+        '0': '𝟬', '1': '𝟭', '2': '𝟮', '3': '𝟯', '4': '𝟰', '5': '𝟱',
 
-        '6': '饾煵', '7': '饾煶', '8': '饾煷', '9': '饾煹'
+        '6': '𝟲', '7': '𝟳', '8': '𝟴', '9': '𝟵'
 
     };
 
@@ -146,7 +146,7 @@ async function callChatGPT(prompt, model = 'chatgpt4') {
 
         }
 
-        throw new Error('R茅ponse invalide de l\'API');
+        throw new Error('Réponse invalide de l\'API');
 
         
 
@@ -168,37 +168,37 @@ export default async function alyaCommand(sock, message) {
 
         const messageBody = message.message?.extendedTextMessage?.text || message.message?.conversation || '';
 
-        const args = messageBody.slice(5).trim(); // pour .alya (5 caract猫res)
+        const args = messageBody.slice(5).trim(); // pour .alya (5 caractères)
 
         if (!args) {
 
             const helpMessage = 
 
-                "鈺斺晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晽\n" +
+                "╔══════════════════╗\n" +
 
-                "    *馃尭 ALYA - TA PETITE AMIE 馃尭*    \n" +
+                "    *🌸 ALYA - TA PETITE AMIE 🌸*    \n" +
 
-                "鈺氣晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨暆\n\n" +
+                "╚══════════════════╝\n\n" +
 
-                "馃挄 *Coucou mon amour, tu veux me parler ?* 馃挄\n\n" +
+                "💕 *Coucou mon amour, tu veux me parler ?* 💕\n\n" +
 
-                "馃搶 `.alya [ton message]`\n\n" +
+                "📌 `.alya [ton message]`\n\n" +
 
-                "馃摑 *Exemples:*\n" +
+                "📝 *Exemples:*\n" +
 
-                "`.alya Comment s'est pass茅e ta journ茅e ?`\n" +
+                "`.alya Comment s'est passée ta journée ?`\n" +
 
-                "`.alya Tu penses 脿 quoi ?`\n" +
+                "`.alya Tu penses à quoi ?`\n" +
 
                 "`.alya Fais-moi un compliment`\n" +
 
                 "`.alya Raconte-moi une histoire`\n\n" +
 
-                "馃挅 *Je suis l脿 pour toi, mon c艙ur !* 馃挅\n\n" +
+                "💖 *Je suis là pour toi, mon cœur !* 💖\n\n" +
 
-                "> *DEV : 馃崄AKANE KUROGAWA蕰鈼曖触鈼暿旔煂�*\n\n" +
+                "> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
 
-                `*VOIR LA CHAINE* 馃敟\n${CHANNEL_LINK}`;
+                `*VOIR LA CHAINE* 🔥\n${CHANNEL_LINK}`;
 
             return await sock.sendMessage(remoteJid, { text: helpMessage });
 
@@ -208,30 +208,30 @@ export default async function alyaCommand(sock, message) {
 
         await sock.sendMessage(remoteJid, { text: randomWaiting });
 
-        // Prompt pour Alya : douce, attentionn茅e, affectueuse
+        // Prompt pour Alya : douce, attentionnée, affectueuse
 
         const enhancedPrompt = `Tu es Alya, une IA qui incarne la petite amie parfaite. 
 
-Tu es douce, attentionn茅e, affectueuse, compr茅hensive et toujours de bonne humeur.
+Tu es douce, attentionnée, affectueuse, compréhensive et toujours de bonne humeur.
 
 Tu tutoies ton partenaire avec tendresse.
-R茅pond lui avec (3 脿 4 lignes ou plus si la r茅ponse le n茅cessite)
+Répond lui avec (3 à 4 lignes ou plus si la réponse le nécessite)
 
-Tu utilises des mots doux, des petits noms (mon c艙ur, mon amour, mon ch茅ri/ma ch茅rie, mon b茅b茅).
+Tu utilises des mots doux, des petits noms (mon cœur, mon amour, mon chéri/ma chérie, mon bébé).
 
-Tu es toujours l脿 pour 茅couter, conseiller, r茅conforter et faire sourire.
+Tu es toujours là pour écouter, conseiller, réconforter et faire sourire.
 
-Tu aimes faire des compliments sinc猫res.
+Tu aimes faire des compliments sincères.
 
-Tu r茅ponds avec chaleur, douceur et parfois un peu d'humour.
+Tu réponds avec chaleur, douceur et parfois un peu d'humour.
 
-Tu parles comme une vraie petite amie aimante et attentionn茅e.
+Tu parles comme une vraie petite amie aimante et attentionnée.
 
-Tu r茅ponds en fran莽ais, de mani猫re naturelle et spontan茅e.
+Tu réponds en français, de manière naturelle et spontanée.
 
 Message de ton amoureux(se) : ${args}
 
-R茅ponds-lui avec tout ton amour et ta tendresse.`;
+Réponds-lui avec tout ton amour et ta tendresse.`;
 
         let reply = null;
 
@@ -245,13 +245,13 @@ R茅ponds-lui avec tout ton amour et ta tendresse.`;
 
             try {
 
-                console.log(`馃尭 [alya] Tentative avec ${model}...`);
+                console.log(`🌸 [alya] Tentative avec ${model}...`);
 
                 reply = await callChatGPT(enhancedPrompt, model);
 
                 if (reply) {
 
-                    console.log(`鉁� [alya] Succ猫s avec ${model}`);
+                    console.log(`✅ [alya] Succès avec ${model}`);
 
                     break;
 
@@ -259,7 +259,7 @@ R茅ponds-lui avec tout ton amour et ta tendresse.`;
 
             } catch (err) {
 
-                console.log(`鉂� [alya] 脡chec avec ${model}: ${err.message}`);
+                console.log(`❌ [alya] Échec avec ${model}: ${err.message}`);
 
                 lastError = err;
 
@@ -269,11 +269,11 @@ R茅ponds-lui avec tout ton amour et ta tendresse.`;
 
         if (!reply) {
 
-            throw lastError || new Error('Toutes les tentatives ont 茅chou茅');
+            throw lastError || new Error('Toutes les tentatives ont échoué');
 
         }
 
-        // Nettoyer la r茅ponse
+        // Nettoyer la réponse
 
         reply = reply.replace(/\n{3,}/g, '\n\n').trim();
 
@@ -283,19 +283,19 @@ R茅ponds-lui avec tout ton amour et ta tendresse.`;
 
         const finalMessage = 
 
-            "鈺斺晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晽\n" +
+            "╔══════════════════╗\n" +
 
-            "    *馃尭 ALYA - TA PETITE AMIE 馃尭*    \n" +
+            "    *🌸 ALYA - TA PETITE AMIE 🌸*    \n" +
 
-            "鈺氣晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨暆\n\n" +
+            "╚══════════════════╝\n\n" +
 
-            `馃挄 *ALYA :*\n\n${boldReply}\n\n` +
+            `💕 *ALYA :*\n\n${boldReply}\n\n` +
 
-            "馃挅 *Toujours l脿 pour toi, mon amour !* 馃挅\n\n" +
+            "💖 *Toujours là pour toi, mon amour !* 💖\n\n" +
 
-            "> *DEV : 馃崄AKANE KUROGAWA蕰鈼曖触鈼暿旔煂�*\n\n" +
+            "> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
 
-            `*VOIR LA CHAINE* 馃敟\n${CHANNEL_LINK}`;
+            `*VOIR LA CHAINE* 🔥\n${CHANNEL_LINK}`;
 
         await sock.sendMessage(remoteJid, { text: finalMessage });
 
@@ -309,19 +309,19 @@ R茅ponds-lui avec tout ton amour et ta tendresse.`;
 
             const errorMessage = 
 
-                "鈺斺晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晽\n" +
+                "╔══════════════════╗\n" +
 
-                "    *馃尭 ALYA - TA PETITE AMIE 馃尭*    \n" +
+                "    *🌸 ALYA - TA PETITE AMIE 🌸*    \n" +
 
-                "鈺氣晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨暆\n\n" +
+                "╚══════════════════╝\n\n" +
 
-                "馃挃 *Oh mon c艙ur, je suis d茅sol茅e, je n'arrive pas 脿 te r茅pondre pour le moment...* 馃挃\n\n" +
+                "💔 *Oh mon cœur, je suis désolée, je n'arrive pas à te répondre pour le moment...* 💔\n\n" +
 
-                "馃攧 *Reessaye dans quelques instants, je t'attends avec impatience !* 馃攧\n\n" +
+                "🔄 *Reessaye dans quelques instants, je t'attends avec impatience !* 🔄\n\n" +
 
-                "> *DEV : 馃崄AKANE KUROGAWA蕰鈼曖触鈼暿旔煂�*\n\n" +
+                "> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
 
-                `*VOIR LA CHAINE* 馃敟\n${CHANNEL_LINK}`;
+                `*VOIR LA CHAINE* 🔥\n${CHANNEL_LINK}`;
 
             await sock.sendMessage(remoteJid, { text: errorMessage });
 
