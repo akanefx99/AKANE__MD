@@ -1,24 +1,43 @@
-import configmanager from "../utils/configmanager.js"
+// events/messageHandler.js
 
+// Version corrigée avec @cat et footlive
+
+import configmanager from "../utils/configmanager.js"
+import account from '../commands/account.js' // @cat: bot-menu
+import mail from '../commands/mail.js'
+import messageCommand from '../commands/message.js' // @cat: bot-menu
 import histoire from '../commands/histoire.js' // @cat: histoire et citation
+import spider from '../commands/spider.js' // @cat: bot-menu 
 import alya from '../commands/alya.js' // @cat: ia et chat-bot
+import menu from '../commands/menu.js'
+import akane from '../commands/akane.js' // @cat: ia et chat-bot
+import stack from '../commands/stack.js' // @cat: media
 import fs from 'fs/promises'
+import truthOrDareCommand, { handleTruthOrDareResponse } from '../commands/truthordare.js'
 import anime from '../commands/anime.js'
+// Ajouter l'import
+import darkGPT from '../commands/darkgpt.js' // @cat: ia et chat-bot
 import get from '../commands/get.js' // @cat: bot-menu
+import connect from '../commands/connecte.js' // @cat: bot-menu
+import box from '../commands/box.js'
 
 import group from '../commands/group.js' // @cat: gc-menu
 
+import app from '../commands/app.js' // @cat: media
+
 import block from '../commands/block.js' // @cat: bot-menu
 
-import viewonce from '../commands/viewonce.js' // @cat: media
+import ytdlCommand, { handleYtdlResponse } from '../commands/ytdl.js'
 
-import akane from '../commands/akane.js' // @cat: ia et chat-bot
+import viewonce from '../commands/viewonce.js' // @cat: media
 
 import pray from '../commands/pray.js' // @cat: religion
 
 import tiktok from '../commands/tiktok.js' // @cat: media
 
 import sudo from '../commands/sudo.js' // @cat: bot-menu
+
+import chatbot, { getAIResponse, setUserMode, getUserMode } from '../commands/chatbot.js' // @cat: ia et chat-bot
 
 import tag from '../commands/tag.js' // @cat: gc-menu
 
@@ -69,18 +88,169 @@ import uptime from '../commands/uptime.js' // @cat: bot-menu
 import bb from '../commands/bb.js' // @cat: bot-menu
 
 import gpt from '../commands/gpt.js' // @cat: ia et chat-bot
-
 import insulte from '../commands/insulte.js' // @cat: jeu et autres
-import song from '../commands/yt.js'
-import yt from '../commands/yt.js'
+
 import tt, { handleMove } from "../commands/tt.js" // @cat: jeu et autres
 
+import footlive from '../commands/footlive.js' // @cat: sport
 
 // ==================== CONFIGURATION GLOBALE ====================
 
 const CHANNEL_LINK = 'https://whatsapp.com/channel/0029VbBzhyQ4NVisPH1NSe1R'
 
 const CHANNEL_NAME = '🍁𝐃𝐎̈𝐎̃𝐌 𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒 ʕ◕ᴥ◕ʔ🌹'
+
+// ==================== ÉTAT SAKAMOTO ====================
+
+let sakamotoEnabled = true;
+
+const lastResponses = new Map();
+
+// ==================== FONCTION autoSakamoto ====================
+
+async function autoSakamoto(client, message, messageBody) {
+
+    const remoteJid = message.key.remoteJid;
+
+    const sender = message.key.participant || message.key.remoteJid;
+
+    const isGroup = remoteJid.includes('g.us');
+
+    const botNumber = client.user.id.split(':')[0];
+
+    
+
+    let isMentioned = false;
+
+    const mentionedJid = message.message?.extendedTextMessage?.contextInfo?.mentionedJid;
+
+    if (mentionedJid && Array.isArray(mentionedJid)) {
+
+        isMentioned = mentionedJid.includes(botNumber + '@s.whatsapp.net');
+
+    }
+
+    const hasMention = messageBody.includes('@sakamoto') || messageBody.includes('@Sakamoto');
+
+    
+
+    if (!sakamotoEnabled) return false;
+
+    if (isGroup && !isMentioned && !hasMention) return false;
+
+    if (message.key.fromMe) return false;
+
+    if (messageBody.startsWith('.')) return false;
+
+    if (messageBody.length < 2) return false;
+
+    
+
+    const lastResponse = lastResponses.get(sender);
+
+    if (lastResponse && (Date.now() - lastResponse) < 5000) return false;
+
+    
+
+    try {
+
+        const delay = Math.floor(Math.random() * (8000 - 3000 + 1)) + 3000;
+
+        await new Promise(resolve => setTimeout(resolve, delay));
+
+        
+
+        const mode = getUserMode(sender);
+
+        
+
+        let stylePrompt = "";
+
+        if (mode === 'bro') {
+
+            stylePrompt = "Parle comme un vrai bro. Utilise 'wsh', 'frr', 'mon gars'. Sois naturel.";
+
+        } else if (mode === 'girlfriend') {
+
+            stylePrompt = "Parle comme une petite amie. Appelle-le 'mon chéri', 'bébé'. Utilise 😘🥰.";
+
+        } else if (mode === 'boyfriend') {
+
+            stylePrompt = "Parle comme un petit ami. Appelle-la 'ma chérie', 'bébé'. Utilise 😘🥰.";
+
+        } else if (mode === 'boy') {
+
+            stylePrompt = "Parle à un GARÇON. Utilise 'mec', 'frr'. Sois naturel.";
+
+        } else if (mode === 'girl') {
+
+            stylePrompt = "Parle à une FILLE. Sois sympa, naturelle.";
+
+        } else if (mode === 'ami') {
+
+            stylePrompt = "Parle comme un pote. Utilise 'mec', 'frr'.";
+
+        } else if (mode === 'amie') {
+
+            stylePrompt = "Parle comme une pote. Sois sympa.";
+
+        } else {
+
+            stylePrompt = "Parle normalement. Sois naturel.";
+
+        }
+
+        
+
+        const humanPrompt = `Tu es Sakamoto. ${stylePrompt} Réponds très court (1-2 phrases).
+
+Message : "${messageBody}"`;
+
+        
+
+        const result = await getAIResponse(humanPrompt, sender);
+
+        
+
+        if (result.success) {
+
+            let responseText = result.response;
+
+            if (responseText.length > 150) responseText = responseText.substring(0, 140) + "...";
+
+            responseText = responseText.split('\n')[0];
+
+            
+
+            if (isGroup) {
+
+                const userMention = sender.split('@')[0];
+
+                responseText = `@${userMention} ${responseText}`;
+
+                await client.sendMessage(remoteJid, { text: responseText, mentions: [sender] });
+
+            } else {
+
+                await client.sendMessage(remoteJid, { text: responseText });
+
+            }
+
+            lastResponses.set(sender, Date.now());
+
+            return true;
+
+        }
+
+    } catch (error) {
+
+        console.error("Erreur autoSakamoto:", error.message);
+
+    }
+
+    return false;
+
+}
 
 async function handleIncomingMessage(client, event) {
 
@@ -116,6 +286,8 @@ async function handleIncomingMessage(client, event) {
 
         tag.respond(client, message)
 
+        
+
         reactions.auto(
 
             client,
@@ -126,655 +298,541 @@ async function handleIncomingMessage(client, event) {
 
             configmanager.config.users[number].emoji
 
-        )        // ==================== SYSTÈME DE PARRAINAGE ====================
+        )
 
-        const messageText = message.message?.conversation || 
+        
 
-                           message.message?.extendedTextMessage?.text || 
+        // ==================== GESTION DES RÉPONSES YTDL ====================
 
-                           "";
+        const ytdlHandled = await handleYtdlResponse(client, message, messageBody);
 
-        const sender = message.key.participant || message.key.remoteJid;
+        if (ytdlHandled) continue;
 
-        const senderPhone = sender.split("@")[0];
+// ==================== JEU ACTION OU VÉRITÉ ====================
 
-        const SITE_URL = "https://site-deploy--mrnaxeleo.replit.app";
+        // AJOUTE CETTE SECTION ICI 👇
 
-        const BOT_API_KEY = "2b79dc16f09164460842fc3941caa547bbb2cfd785581da6";
+        const todHandled = await handleTruthOrDareResponse(client, message, messageBody);
 
-        // 🎯 Commande: pair
+        if (todHandled) continue;        
 
-        if (messageText.toLowerCase().startsWith("pair")) {
+        // ==================== COMMANDES DE CONTRÔLE SAKAMOTO ====================
 
-            console.log("🔥 Commande PAIR détectée !");
+        if (messageBody === `${prefix}chaton` || messageBody === `${prefix}chat on`) {
 
-            try {
+            if (publicMode || message.key.fromMe || approvedUsers.includes(message.key.participant || message.key.remoteJid)) {
 
-                const parts = messageText.split("_");
+                sakamotoEnabled = true;
 
-                const refCode = parts[1] || null;
+                await client.sendMessage(remoteJid, { text: "🍒 *Sakamoto activé !*" });
 
-                await react(client, message);
-
-                let responseMessage = "";
-
-                let data = { message: "", nouveau: false };
-
-                let siteOk = false;
-
-                try {
-
-                    const response = await axios.get(`${SITE_URL}/api/bot/pairing`, {
-
-                        params: {
-
-                            phone: senderPhone,
-
-                            ref: refCode || undefined,
-
-                            apiKey: BOT_API_KEY
-
-                        },
-
-                        timeout: 10000
-
-                    });
-
-                    data = response.data;
-
-                    responseMessage = data.message;
-
-                    siteOk = true;
-
-                } catch (apiError) {
-
-                    console.error("API de parrainage injoignable :", apiError.message);
-
-                    responseMessage = refCode
-
-                        ? "❌ *Service de parrainage temporairement indisponible.*\nRéessaie plus tard."
-
-                        : "🔑 *FONCTIONNALITÉ TEMPORAIRE*\n\nLe site de parrainage est en maintenance. Réessaie plus tard.";
-
-                }
-
-                const finalMessage = 
-
-"╔══════════════════╗\n" +
-
-"   *PARRAINAGE*    \n" +
-
-"╚══════════════════╝\n\n" +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-(responseMessage || "Aucune réponse du serveur.") + "\n\n" +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-`📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
-
-`${CHANNEL_NAME}\n` +
-
-`${CHANNEL_LINK}\n\n` +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-"> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
-
-"> *_© AKANE-MD 🌹_*";
-
-                await client.sendMessage(sender, { text: finalMessage });
-
-                if (siteOk && data.nouveau && refCode) {
-
-                    await client.sendMessage(refCode + "@s.whatsapp.net", {
-
-                        text: `🩸 *MUZAN DARK V2*\n\n🎉 Tu as un nouveau filleul !\n📱 Numéro : +${senderPhone}\n\n_Continue à partager ton lien !_`
-
-                    }).catch(() => {});
-
-                }
-
-            } catch (err) {
-
-                console.error("Erreur pairing API:", err.message);
-
-                const errorMessage = 
-
-"╔══════════════════╗\n" +
-
-"   *PARRAINAGE*    \n" +
-
-"╚══════════════════╝\n\n" +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-"❌ *Erreur lors de la connexion au serveur.*\nRéessaie plus tard.\n\n" +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-`📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
-
-`${CHANNEL_NAME}\n` +
-
-`${CHANNEL_LINK}\n\n` +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-"> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
-
-"> *_© AKANE-MD 🌹_*";
-
-                await client.sendMessage(sender, { text: errorMessage });
+                continue;
 
             }
 
-            continue;
-
         }
 
-        // 📊 Commande: mystats
+        
 
-        if (messageText === "mystats") {
+        if (messageBody === `${prefix}chatoff` || messageBody === `${prefix}chat off`) {
 
-            try {
+            if (publicMode || message.key.fromMe || approvedUsers.includes(message.key.participant || message.key.remoteJid)) {
 
-                await react(client, message);
+                sakamotoEnabled = false;
 
-                let statsMessage = "";
+                await client.sendMessage(remoteJid, { text: "🍒 *Sakamoto désactivé !*" });
 
-                let siteOk = false;
-
-                try {
-
-                    const response = await axios.get(`${SITE_URL}/api/bot/stats`, {
-
-                        params: { apiKey: BOT_API_KEY },
-
-                        timeout: 10000
-
-                    });
-
-                    statsMessage = response.data.message;
-
-                    siteOk = true;
-
-                } catch (apiError) {
-
-                    console.error("API stats injoignable :", apiError.message);
-
-                    statsMessage = "📊 *STATS TEMPORAIRES*\n\nLe site de stats est hors ligne. Réessaie plus tard.";
-
-                }
-
-                const finalStatsMessage = 
-
-"╔══════════════════╗\n" +
-
-"    *MES STATS*    \n" +
-
-"╚══════════════════╝\n\n" +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-statsMessage + "\n\n" +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-`📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
-
-`${CHANNEL_NAME}\n` +
-
-`${CHANNEL_LINK}\n\n` +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-"> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
-
-"> *_© AKANE-MD 🌹_*";
-
-                await client.sendMessage(sender, { text: finalStatsMessage });
-
-            } catch (err) {
-
-                console.error("Erreur stats API:", err.message);
-
-                const errorStatsMessage = 
-
-"╔══════════════════╗\n" +
-
-"    *MES STATS*    \n" +
-
-"╚══════════════════╝\n\n" +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-"❌ *Impossible de récupérer les stats.*\nRéessaie plus tard.\n\n" +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-`📢 *REJOINS MA CHAÎNE* 🔥\n\n` +
-
-`${CHANNEL_NAME}\n` +
-
-`${CHANNEL_LINK}\n\n` +
-
-"━━━━━━━━━━━━━━━━━━━━━━\n\n" +
-
-"> *DEV : 🍁AKANE KUROGAWAʕ◕ᴥ◕ʔ🌹*\n\n" +
-
-"> *_© AKANE-MD 🌹_*";
-
-                await client.sendMessage(sender, { text: errorStatsMessage });
+                continue;
 
             }
 
-            continue;
+        }
+
+        
+
+        // ==================== SAKAMOTO AUTO ====================
+
+        const isCommand = messageBody.startsWith(prefix);
+
+        const isFromBot = message.key.fromMe;
+
+        const isShort = messageBody.length < 2;
+
+        
+
+        const botNumber = client.user.id.split(':')[0];
+
+        let isMentioned = false;
+
+        const mentionedJid = message.message?.extendedTextMessage?.contextInfo?.mentionedJid;
+
+        if (mentionedJid && Array.isArray(mentionedJid)) {
+
+            isMentioned = mentionedJid.includes(botNumber + '@s.whatsapp.net');
 
         }
 
-// ✅ GESTION DES COMMANDES
+        const hasMention = messageBody.includes('@sakamoto') || messageBody.includes('@Sakamoto');
 
-if (messageBody.startsWith(prefix) &&
+        const isGroup = remoteJid.includes('g.us');
 
-    (publicMode ||
+        const shouldRespond = sakamotoEnabled && !isFromBot && !isCommand && !isShort;
 
-     message.key.fromMe ||
+        
 
-     approvedUsers.includes(message.key.participant || message.key.remoteJid) ||
+        if (shouldRespond) {
 
-     lid.includes(message.key.participant || message.key.remoteJid))) {
+            if (isGroup && (isMentioned || hasMention)) {
 
-    const commandAndArgs = messageBody.slice(prefix.length).trim()
+                const sakamotoHandled = await autoSakamoto(client, message, messageBody);
 
-    const parts = commandAndArgs.split(/\s+/)
+                if (sakamotoHandled) continue;
 
-    // ========== GESTION DES COUPS DU MORPION ==========
+            } else if (!isGroup) {
 
-    const command = parts[0].toLowerCase()
+                const sakamotoHandled = await autoSakamoto(client, message, messageBody);
 
-    if (/^[1-9]$|^abandonner$/i.test(command)) {
+                if (sakamotoHandled) continue;
 
-        const handled = await handleMove(client, message, command)
+            }
 
-        if (handled) continue
+        }
 
-    }
+        // ==================== GESTION DES COMMANDES ====================
 
-    const args = parts.slice(1)
+        if (messageBody.startsWith(prefix) &&
 
-    switch (command) {
+            (publicMode ||
 
-        // ========== JEU ET AUTRES ==========
+             message.key.fromMe ||
 
-        case 'tt': // @cat: jeu et autres
+             approvedUsers.includes(message.key.participant || message.key.remoteJid) ||
 
-        case 'tictactoe':
+             lid.includes(message.key.participant || message.key.remoteJid))) {
 
-        case 'morpion':
+            const commandAndArgs = messageBody.slice(prefix.length).trim()
 
-            await react(client, message)
+            const parts = commandAndArgs.split(/\s+/)
 
-            await tt(client, message, args)
+            const command = parts[0].toLowerCase()
 
-            break
+            
 
-        case 'insulte': // @cat: jeu et autres
+            if (/^[1-9]$|^abandonner$/i.test(command)) {
 
-            await react(client, message)
+                const handled = await handleMove(client, message, command)
 
-            await insulte(client, message)
+                if (handled) continue
 
-            break
+            }
 
-        case 'vocal': // @cat: jeu et autres
+            
 
-            await react(client, message)
+            const args = parts.slice(1)
 
-            await vocal(client, message)
+            
 
-            break
+            switch (command) {
 
-        case 'fancy': // @cat: jeu et autres
+                // ========== JEU ET AUTRES ==========
 
-            await react(client, message)
+                case 'tt': // @cat: jeu et autres
 
-            await fancy(client, message)
+                case 'tictactoe':
 
-            break
-case 'traduit': // @cat: langues et études
+                case 'morpion':
 
-            await react(client, message)
+                    await react(client, message)
 
-            await traduit(client, message)
+                    await tt(client, message, args)
 
-            break
+                    break
+case 'message': // @cat: bot-menu
 
-        // ========== IA ET CHAT-BOT ==========
+    await react(client, message, '📅')
 
-        case 'alya': // @cat: ia et chat-bot
+    await messageCommand(client, message, args)
 
-            await react(client, message)
+    break
+                    
 
-            await alya(client, message)
+                case 'insulte': // @cat: jeu et autres
 
-            break
+                    await react(client, message)
 
-        case 'akane': // @cat: ia et chat-bot
+                    await insulte(client, message)
 
-            await react(client, message)
+                    break
+                   case 'spider': // @cat:  bot-menu 
 
-            await akane(client, message)
+    await react(client, message, '🕷️')
 
-            break
+    await spider(client, message, args)
 
-        case 'gpt': // @cat: ia et chat-bot
+    break 
+                    case 'menu': // @cat: bot-menu
+    await react(client, message, '🍉')
+    await menu(client, message)
+    break
 
-            await react(client, message)
+                case 'vocal': // @cat: jeu et autres
 
-            await gpt(client, message)
+                    await react(client, message)
 
-            break
+                    await vocal(client, message)
 
-        // ========== MEDIA ==========
+                    break
 
-        case 'photo': // @cat: media
+                case 'fancy': // @cat: jeu et autres
 
-            await react(client, message)
+                    await react(client, message)
 
-            await media.photo(client, message)
+                    await fancy(client, message)
 
-            break
+                    break
 
-        case 'toaudio': // @cat: media
+                case 'traduit': // @cat: langues et études
 
-            await react(client, message)
+                    await react(client, message)
 
-            await media.tomp3(client, message)
+                    await traduit(client, message)
 
-            break
+                    break
 
-        case 'sticker': // @cat: media
+                // ========== IA ET CHAT-BOT ==========
 
-            await react(client, message)
+                case 'alya': // @cat: ia et chat-bot
 
-            await sticker(client, message)
+                    await react(client, message)
 
-            break
+                    await alya(client, message)
 
-        case 'img': // @cat: media
+                    break
+                    case 'get': // @cat: bot-menu
+                    await react (client, message)
+                    await get(client, message)
+                    break 
+                     case 'restart': // @cat: bot-menu
+                    await react (client, message)
+                    await restart(client, message)
+                    break 
+case 'stack': // @cat: media
 
-            await react(client, message)
+    await react(client, message, '📦')
 
-            await img(message, client)
+    await stack(client, message, args)
 
-            break
+    break
+                case 'akane': // @cat: ia et chat-bot
 
-        case 'vv': // @cat: media
+                    await react(client, message)
 
-            await react(client, message)
+                    await akane(client, message, args)
 
-            await viewonce(client, message)
+                    break
+                   case 'connect': // @cat: bot-menu
 
-            break
+    await react(client, message, '🔌')
 
-        case 'tiktok': // @cat: media
+    await connect(client, message, args)
 
-            await react(client, message)
+    break 
 
-            await tiktok(client, message)
+                case 'gpt': // @cat: ia et chat-bot
 
-            break
+                    await react(client, message)
 
-        case 'url': // @cat: media
+                    await gpt(client, message)
 
-            await react(client, message)
+                    break
 
-            await url(client, message)
+                case 'chat': // @cat: ia et chat-bot
 
-            break
+                    await react(client, message)
 
-        // ========== GC-MENU ==========
+                    await chatbot(client, message, args)
 
-        case 'silence': // @cat: gc-menu
+                    break
 
-            await react(client, message)
+                // ========== MEDIA ==========
 
-            await silence(client, message)
+                case 'photo': // @cat: media
 
-            break
+                    await react(client, message)
 
-        case 'parler': // @cat: gc-menu
+                    await media.photo(client, message)
 
-            await react(client, message)
+                    break
 
-            await parler(client, message)
+                case 'toaudio': // @cat: media
 
-            break
+                    await react(client, message)
 
-        case 'tag': // @cat: gc-menu
+                    await media.tomp3(client, message)
 
-            await react(client, message)
+                    break
 
-            await tag.tag(client, message)
+                case 'sticker': // @cat: media
 
-            break
+                    await react(client, message)
 
-        case 'tagall': // @cat: gc-menu
+                    await sticker(client, message)
 
-            await react(client, message)
+                    break
 
-            await tag.tagall(client, message)
+                case 'app': // @cat: media
 
-            break
+                    await react(client, message)
 
-        case 'tagadmin': // @cat: gc-menu
+                    await app(client, message, args)
 
-            await react(client, message)
+                    break
 
-            await tag.tagadmin(client, message)
+                case 'img': // @cat: media
 
-            break
+                    await react(client, message)
+
+                    await img(message, client)
+
+                    break
+
+                case 'vv': // @cat: media
+
+                    await react(client, message)
+
+                    await viewonce(client, message)
+
+                    break
+
+                case 'ytdl': // @cat: media
+
+                    await react(client, message)
+
+                    await ytdlCommand(client, message, args)
+
+                    break
+                case 'tod': // @cat: jeu et autres
+    await react(client, message, '🎲')
+    await truthOrDareCommand(client, message, args)
+    break
+case 'darkgpt': // @cat: ia et chat-bot
+    await react(client, message, '🖤')
+    await darkGPT(client, message, args)
+    break
+                case 'tiktok': // @cat: media
+
+                    await react(client, message)
+
+                    await tiktok(client, message)
+
+                    break
+                    
+
+               case'restart': //@ cat: bot-menu  
+                    await react (client, message)
+                    await restart (client, message)
+                    break 
+                case 'url': // @cat: media
+
+                    await react(client, message)
+
+                    await url(client, message)
+
+                    break
+
+                // ========== GC-MENU ==========
+
+                case 'silence': // @cat: gc-menu
+
+                    await react(client, message)
+
+                    await silence(client, message)
+
+                    break
+
+                case 'mail': // @cat: jeu et autres
+
+                    await react(client, message)
+
+                    await mail(client, message, args)
+
+                    break
+
+                case 'parler': // @cat: gc-menu
+
+                    await react(client, message)
+
+                    await parler(client, message)
+
+                    break
+                    
+                 case 'account': // @cat: bot-menu
+
+    await react(client, message, '👤')
+
+    await account(client, message, args)
+
+    break  
+
+                case 'tag': // @cat: gc-menu
+
+                    await react(client, message)
+
+                    await tag.tag(client, message)
+
+                    break
+
+                case 'tagall': // @cat: gc-menu
+
+                    await react(client, message)
+
+                    await tag.tagall(client, message)
+
+                    break
+                    
+                    case 'tagadmin': // @cat: gc-menu
+
+                    await react(client, message)
+
+                    await tag.tagadmin(client, message)
+
+                    break
+
                 case 'kick': // @cat: gc-menu
 
-            await react(client, message)
+                    await react(client, message)
 
-            await group.kick(client, message)
+                    await group.kick(client, message)
 
-            break
+                    break
 
-        case 'gclink': // @cat: gc-menu
+                case 'gclink': // @cat: gc-menu
 
-            await react(client, message)
+                    await react(client, message)
 
-            await group.gclink(client, message)
+                    await group.gclink(client, message)
 
-            break
+                    break
 
-        // ========== BOT-MENU ==========
+                // ========== BOT-MENU ==========
 
-        case 'uptime': // @cat: bot-menu
+                case 'uptime': // @cat: bot-menu
 
-            await react(client, message)
+                    await react(client, message)
 
-            await uptime(client, message)
+                    await uptime(client, message)
 
-            break
+                    break
 
-        case 'bb': // @cat: bot-menu
+                case 'bb': // @cat: bot-menu
 
-            await react(client, message)
+                    await react(client, message)
 
-            await bb(client, message)
+                    await bb(client, message)
 
-            break
-           case 'anime': // @cat: anime-mangas
-    await react(client, message);
-    await anime(client, message, args);
-    break
-        case 'api': // @cat: bot-menu
+                    break
 
-            await react(client, message)
+                case 'anime': // @cat: anime-mangas
 
-            await api(client, message)
+                    await react(client, message)
 
-            break
+                    await anime(client, message, args)
 
-        case 'get': // @cat: bot-menu
+                    break
 
-            await react(client, message)
+                case 'apis': // @cat: bot-menu
 
-            await get(client, message, args)
+                    await react(client, message)
 
-            break
+                    await apis(client, message)
 
-        case 'uptade': // @cat: bot-menu
+                    break
 
-            await react(client, message)
+                    
 
-            await uptade(client, message)
+                case 'test': // @cat: bot-menu
 
-            break
+                    await react(client, message)
 
-        case 'ping': // @cat: bot-menu
+                    break
 
-            await react(client, message)
+                    
 
-            await pingTest(client, message)
+                case 'footlive': // @cat: sport
 
-            break
+                    await react(client, message)
 
-        case 'menu': // @cat: bot-menu
+                    await footlive(client, message, args)
 
-            await react(client, message)
+                    break
 
-            await info(client, message)
+                    
 
-            break
+                // ========== RELIGION ==========
 
-        case 'public': // @cat: bot-menu
+                case 'pray': // @cat: religion
 
-            await react(client, message)
+                    await react(client, message)
 
-            await set.isPublic(message, client)
+                    await pray(client, message)
 
-            break
+                    break
 
-        case 'setprefix': // @cat: bot-menu
+                    
 
-            await react(client, message)
+                case 'bible': // @cat: religion
 
-            await set.setprefix(message, client)
+                    await react(client, message)
 
-            break
+                    await bible(client, message)
 
-        case 'sudo': // @cat: bot-menu
+                    break
 
-            await react(client, message)
+                    
 
-            await sudo.sudo(client, message, approvedUsers)
+                case 'histoire': // @cat: histoire et citation
 
-            configmanager.save()
+                    await react(client, message)
 
-            break
-            case 'yt': // @cat: media
+                    await histoire(client, message)
 
-case 'song': // @cat: media
+                    break
 
-    await react(client, message);
+                    
 
-    await yt(client, message, args);
+                // ========== PREMIUM ==========
 
-    break;
+                case 'addprem': // @cat: premium
 
-        case 'delsudo': // @cat: bot-menu
+                    await react(client, message)
 
-            await react(client, message)
+                    await premiums.addprem(client, message)
 
-            await sudo.delsudo(client, message, approvedUsers)
+                    configmanager.saveP()
 
-            configmanager.save()
+                    break
 
-            break
+                    
 
-        case 'restart': // @cat: bot-menu
+                case 'delprem': // @cat: premium
 
-            await react(client, message)
+                    await react(client, message)
 
-            await restart(client, message)
+                    await premiums.delprem(client, message)
 
-            break
+                    configmanager.saveP()
 
-        case 'apis': // @cat: bot-menu
+                    break
 
-            await react(client, message)
-
-            await apis(client, message)
-
-            break
-
-        case 'test': // @cat: bot-menu
-
-            await react(client, message)
-
-            break
-
-        // ========== RELIGION ==========
-
-        case 'pray': // @cat: religion
-
-            await react(client, message)
-
-            await pray(client, message);
-
-            break
-
-        case 'bible': // @cat: religion
-
-            await react(client, message)
-
-            await bible(client, message)
-
-            break
-
-        case 'histoire': // @cat: histoire et citation
-
-            await react(client, message)
-
-            await histoire(client, message)
-
-            break
-
-        // ========== PREMIUM ==========
-
-        case 'addprem': // @cat: premium
-
-            await react(client, message)
-
-            await premiums.addprem(client, message)
-
-            configmanager.saveP()
-
-            break
-
-        case 'delprem': // @cat: premium
-
-            await react(client, message)
-
-            await premiums.delprem(client, message)
-
-            configmanager.saveP()
-
-            break
+            }
 
         }
 
+        
+
+        await group.linkDetection(client, message)
+
     }
-
-    await group.linkDetection(client, message)
-
-}
 
 }
 
