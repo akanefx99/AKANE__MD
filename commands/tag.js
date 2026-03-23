@@ -52,8 +52,8 @@ export async function respond(client, message) {
         const lid = client.user?.lid.split(':')[0]
         if (messageBody.includes(`@${lid}`)) {
             await client.sendMessage(remoteJid, {
-                audio: { url: "database/DigiX.mp3" },
-                mimetype: "audio/mp4",
+                audio: { url: "" },
+                mimetype: "",
                 ptt: true,
                 contextInfo: { 
                     stanzaId: message.key.id,
