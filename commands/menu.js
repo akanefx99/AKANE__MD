@@ -53,6 +53,8 @@ function getCategoryIcon(category) {
   if (c === "histoire et citation" || c === "") return "🍒";
 
   if (c === "anime-mangas" || c === "") return "🇯🇵";
+    
+     if (c === "sport" || c === "") return "⚽";
 
   
 
