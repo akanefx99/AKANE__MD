@@ -1028,21 +1028,15 @@ https://whatsapp.com/channel/0029VbCmpwK89inpJICAG21A
 
                 case 'anime':
 
-                    details = `Animes vus: ${progress?.animeWatched?.length || 0}`;
+                progressText = `📊 *PROGRESSION ANIME*\n\n• Animes vus : ${progress.animeWatched?.length || 0}`;
 
-                    break;
-
-            }
-
-            
-
-            await client.sendMessage(remoteJid, { text: `✅ *Progression sauvegardée pour ${game} !*\n\n📊 ${details}` });
-
-        } else {
-
-            await client.sendMessage(remoteJid, { text: "❌ *Erreur lors de la sauvegarde*" });
+                break;
 
         }
+
+        
+
+        await client.sendMessage(remoteJid, { text: `${progressText}\n\n━━━━━━━━━━━━━━━━━━━━\n> *© 𝐌𝐫 𝐒𝐀𝐊𝐀𝐌𝐎𝐓𝐎 🍒*` });
 
         return;
 
@@ -1050,9 +1044,9 @@ https://whatsapp.com/channel/0029VbCmpwK89inpJICAG21A
 
     
 
-    // ========== CHARGER UNE PROGRESSION ==========
+    // ========== CHANGER PHOTO DE PROFIL (VIA LIEN) ==========
 
-    if (subCommand === 'load') {
+    if (subCommand === 'setpp') {
 
         const session = sessions.get(sender);
 
@@ -1066,13 +1060,29 @@ https://whatsapp.com/channel/0029VbCmpwK89inpJICAG21A
 
         
 
-        const game = args[1];
+        const imageUrl = args[1];
 
         
 
-        if (!game) {
+        if (!imageUrl) {
 
-            await client.sendMessage(remoteJid, { text: "❌ *Utilisation :* `account load [jeu]`" });
+            await client.sendMessage(remoteJid, { text: 
+
+`❌ *Utilisation :* \`account setpp [lien de l'image]\`
+
+📝 *Exemple :*
+
+\`account setpp https://files.catbox.moe/onpl3h.jpg\`
+
+💡 *Pour obtenir un lien :*
+
+1. Envoie ton image
+
+2. Tape \`.geturl\` en réponse à l'image
+
+━━━━━━━━━━━━━━━━━━━━
+
+> *© 𝐌𝐫 𝐒𝐀𝐊𝐀𝐌𝐎𝐓𝐎 🍒*` });
 
             return;
 
@@ -1080,13 +1090,49 @@ https://whatsapp.com/channel/0029VbCmpwK89inpJICAG21A
 
         
 
-        const progress = getProgress(session.username, game);
+        try {
 
-        
+            const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
 
-        if (!progress || Object.keys(progress).length === 0) {
+            const imageBuffer = Buffer.from(response.data);
 
-            await client.sendMessage(remoteJid, { text: `📭 *Aucune progression sauvegardée pour ${game}*` });
+            
+
+            const success = await saveProfilePicture(session.username, imageBuffer);
+
+            
+
+            if (success) {
+
+                await client.sendMessage(remoteJid, { text: "✅ *Photo de profil mise à jour !*\n\nUtilise `account profile` pour la voir." });
+
+            } else {
+
+                await client.sendMessage(remoteJid, { text: "❌ *Erreur lors de la mise à jour*" });
+
+            }
+
+        } catch (error) {
+
+            await client.sendMessage(remoteJid, { text: "❌ *Lien invalide ou image introuvable !*\n\nVérifie que le lien pointe bien vers une image." });
+
+        }
+
+        return;
+
+    }
+
+    
+
+    // ========== SUPPRIMER SON COMPTE ==========
+
+    if (subCommand === 'delete' || subCommand === 'del') {
+
+        const session = sessions.get(sender);
+
+        if (!session) {
+
+            await client.sendMessage(remoteJid, { text: "❌ *Tu n'es pas connecté !*" });
 
             return;
 
@@ -1094,6 +1140,70 @@ https://whatsapp.com/channel/0029VbCmpwK89inpJICAG21A
 
         
 
-        let progressText = "";
+        const confirm = args[1]?.toLowerCase();
 
-        switch(game) {
+        
+
+        if (confirm !== 'confirm') {
+
+            await client.sendMessage(remoteJid, { text: 
+
+`⚠️ *SUPPRESSION DE COMPTE*
+
+━━━━━━━━━━━━━━━━━━━━
+
+Tu es sur le point de supprimer définitivement ton compte *${session.username}*.
+
+⚠️ *Cette action est irréversible !*
+
+Pour confirmer, tape :
+
+\`account delete confirm\`
+
+━━━━━━━━━━━━━━━━━━━━
+
+> *© 𝐌𝐫 𝐒𝐀𝐊𝐀𝐌𝐎𝐓𝐎 🍒*` });
+
+            return;
+
+        }
+
+        
+
+        accounts.delete(session.username);
+
+        sessions.delete(sender);
+
+        await saveAccounts();
+
+        await saveSessions();
+
+        
+
+        await client.sendMessage(remoteJid, { text: 
+
+`🗑️ *COMPTE SUPPRIMÉ*
+
+━━━━━━━━━━━━━━━━━━━━
+
+👤 *${session.username}* a été supprimé définitivement.
+
+Tu peux recréer un compte avec \`account register\`
+
+━━━━━━━━━━━━━━━━━━━━
+
+> *© 𝐌𝐫 𝐒𝐀𝐊𝐀𝐌𝐎𝐓𝐎 🍒*` });
+
+        return;
+
+    }
+
+    
+
+    await client.sendMessage(remoteJid, { text: "❌ *Commande invalide !*\n\nUtilise `account help` pour voir les commandes." });
+
+}
+
+export default accountCommand;
+
+export { saveGameProgress, getProgress, autoSaveProgress };
