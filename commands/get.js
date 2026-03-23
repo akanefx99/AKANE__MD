@@ -14,8 +14,6 @@ export default async function get(client, message, args) {
 
         const remoteJid = message.key.remoteJid
 
-        
-
         // Récupérer le message complet
 
         const fullMessage = message.message?.conversation || 
@@ -24,15 +22,11 @@ export default async function get(client, message, args) {
 
                            ''
 
-        
-
         // Extraire le nom du fichier
 
         const parts = fullMessage.trim().split(/\s+/)
 
         let fileName = null
-
-        
 
         if (parts.length >= 2) {
 
@@ -44,21 +38,23 @@ export default async function get(client, message, args) {
 
         }
 
-        
-
-        // Définir le dossier des commandes
+        // Définir les dossiers des commandes et des events
 
         const commandsDir = path.join(__dirname, '../commands')
+
+        const eventsDir = path.join(__dirname, '../events')
 
         // Si aucun fichier n'est spécifié
 
         if (!fileName) {
 
-            let filesList = []
+            let commandsList = []
+
+            let eventsList = []
 
             try {
 
-                filesList = fs.readdirSync(commandsDir)
+                commandsList = fs.readdirSync(commandsDir)
 
                     .filter(file => file.endsWith('.js'))
 
@@ -66,19 +62,31 @@ export default async function get(client, message, args) {
 
             } catch (err) {
 
-                console.error('❌ Erreur lecture dossier:', err)
+                console.error('❌ Erreur lecture dossier commands:', err)
 
             }
 
-            
+            try {
 
-            const filesText = filesList.join('\n')
+                eventsList = fs.readdirSync(eventsDir)
 
-            
+                    .filter(file => file.endsWith('.js'))
+
+                    .map(file => `• ${file}`)
+
+            } catch (err) {
+
+                console.error('❌ Erreur lecture dossier events:', err)
+
+            }
+
+            const allFiles = [...commandsList, ...eventsList]
+
+            const filesText = allFiles.join('\n')
 
             return await client.sendMessage(remoteJid, { 
 
-                text: `❌ Veuillez spécifier un fichier !\n\n📁 *Fichiers disponibles (${filesList.length}):*\n${filesText}\n\nExemple: *.get tt.js*` 
+                text: `❌ Veuillez spécifier un fichier !\n\n📁 *Fichiers disponibles:*\n\n📂 *commands/*\n${commandsList.join('\n') || '• Aucun'}\n\n📂 *events/*\n${eventsList.join('\n') || '• Aucun'}\n\nExemple: *.get messageHandler.js*` 
 
             })
 
@@ -100,19 +108,35 @@ export default async function get(client, message, args) {
 
         const safeFileName = fileName.endsWith('.js') ? fileName : `${fileName}.js`
 
-        // Construire le chemin complet
+        // Vérifier d'abord dans le dossier commands, puis dans events
 
-        const filePath = path.join(commandsDir, safeFileName)
+        let filePath = path.join(commandsDir, safeFileName)
 
-        // Vérifier si le fichier existe
+        let isInEvents = false
 
         if (!fs.existsSync(filePath)) {
 
-            let filesList = []
+            filePath = path.join(eventsDir, safeFileName)
+
+            if (fs.existsSync(filePath)) {
+
+                isInEvents = true
+
+            }
+
+        }
+
+        // Si le fichier n'existe pas dans les deux dossiers
+
+        if (!fs.existsSync(filePath)) {
+
+            let commandsList = []
+
+            let eventsList = []
 
             try {
 
-                filesList = fs.readdirSync(commandsDir)
+                commandsList = fs.readdirSync(commandsDir)
 
                     .filter(file => file.endsWith('.js'))
 
@@ -120,19 +144,31 @@ export default async function get(client, message, args) {
 
             } catch (err) {
 
-                console.error('❌ Erreur lecture dossier:', err)
+                console.error('❌ Erreur lecture dossier commands:', err)
 
             }
 
-            
+            try {
 
-            const filesText = filesList.join('\n')
+                eventsList = fs.readdirSync(eventsDir)
 
-            
+                    .filter(file => file.endsWith('.js'))
+
+                    .map(file => `• ${file}`)
+
+            } catch (err) {
+
+                console.error('❌ Erreur lecture dossier events:', err)
+
+            }
+
+            const allFiles = [...commandsList, ...eventsList]
+
+            const filesText = allFiles.join('\n')
 
             return await client.sendMessage(remoteJid, { 
 
-                text: `❌ Le fichier *${safeFileName}* n'existe pas !\n\n📁 *Fichiers disponibles (${filesList.length}):*\n${filesText}` 
+                text: `❌ Le fichier *${safeFileName}* n'existe pas !\n\n📁 *Fichiers disponibles:*\n\n📂 *commands/*\n${commandsList.join('\n') || '• Aucun'}\n\n📂 *events/*\n${eventsList.join('\n') || '• Aucun'}` 
 
             })
 
@@ -152,11 +188,9 @@ export default async function get(client, message, args) {
 
         }
 
-        // Lire le contenu du fichier
+        const folder = isInEvents ? 'events' : 'commands'
 
-        const fileContent = fs.readFileSync(filePath, 'utf-8')
-
-        // === ENVOI DU FICHIER EN PIÈCE JOINTE ===
+        // Envoyer uniquement le fichier en pièce jointe (pas de code dans le chat)
 
         await client.sendMessage(remoteJid, { 
 
@@ -166,87 +200,7 @@ export default async function get(client, message, args) {
 
             mimetype: 'application/javascript',
 
-            caption: `📎 *Fichier joint : ${safeFileName}*`
-
-        })
-
-        // Petit délai entre les deux envois
-
-        await new Promise(resolve => setTimeout(resolve, 1000))
-
-        // === ENVOI DU CODE DANS LE CHAT ===
-
-        const header = `📄 *CODE : ${safeFileName}*\n\n` +
-
-                      `📊 *Taille : ${(stats.size / 1024).toFixed(2)} KB*\n` +
-
-                      `🕒 *Modifié : ${stats.mtime.toLocaleString()}*\n\n`
-
-        const maxLength = 64000 // 64KB max pour WhatsApp
-
-        const fullContent = header + '```js\n' + fileContent + '\n```'
-
-        
-
-        if (fullContent.length > maxLength) {
-
-            // Envoyer d'abord l'en-tête
-
-            await client.sendMessage(remoteJid, { 
-
-                text: `📄 *${safeFileName}*\n📊 *${(stats.size / 1024).toFixed(2)} KB*\n📦 *Code trop long, envoi en plusieurs parties...*` 
-
-            })
-
-            
-
-            // Envoyer le code par morceaux
-
-            const chunkSize = 60000
-
-            const chunks = Math.ceil(fileContent.length / chunkSize)
-
-            
-
-            for (let i = 0; i < chunks; i++) {
-
-                const start = i * chunkSize
-
-                const end = Math.min((i + 1) * chunkSize, fileContent.length)
-
-                const chunk = fileContent.substring(start, end)
-
-                
-
-                await client.sendMessage(remoteJid, { 
-
-                    text: `\`\`\`js\n// Partie ${i + 1}/${chunks}\n${chunk}\n\`\`\`` 
-
-                })
-
-                
-
-                await new Promise(resolve => setTimeout(resolve, 500))
-
-            }
-
-        } else {
-
-            // Envoyer tout d'un coup
-
-            await client.sendMessage(remoteJid, { 
-
-                text: header + '```js\n' + fileContent + '\n```' 
-
-            })
-
-        }
-
-        // Message de confirmation
-
-        await client.sendMessage(remoteJid, { 
-
-            text: `✅ *${safeFileName}* envoyé avec succès (fichier + code)` 
+            caption: `✅ *${folder}/${safeFileName}*\n📊 *${(stats.size / 1024).toFixed(2)} KB*\n🕒 *Modifié : ${stats.mtime.toLocaleString()}*`
 
         })
 
