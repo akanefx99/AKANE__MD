@@ -1,10 +1,10 @@
-// commands/left.js
+// commands/bye.js
 
 // @cat: gc-menu
 
 // Quitter un groupe
 
-async function leftCommand(client, message, args) {
+async function byeCommand(client, message, args) {
 
     const remoteJid = message.key.remoteJid;
 
