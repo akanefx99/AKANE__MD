@@ -20,7 +20,7 @@ import darkGPT from '../commands/darkgpt.js' // @cat: ia et chat-bot
 import get from '../commands/get.js' // @cat: bot-menu
 import connect from '../commands/connecte.js' // @cat: bot-menu
 import box from '../commands/box.js'
-import left from '../commands/left.js'
+import bye from '../commands/left.js'
 import group from '../commands/group.js' // @cat: gc-menu
 
 import app from '../commands/app.js' // @cat: media
