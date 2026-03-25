@@ -28,4 +28,4 @@ async function byeCommand(client, message, args) {
 
 }
 
-export default leftCommand;
+export default byeCommand;
