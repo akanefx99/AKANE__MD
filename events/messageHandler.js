@@ -102,7 +102,7 @@ const CHANNEL_NAME = '🍁𝐃𝐎̈𝐎̃𝐌 𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒 
 
 // ==================== ÉTAT SAKAMOTO ====================
 
-let sakamotoEnabled = true;
+let sakamotoEnabled = false;
 
 const lastResponses = new Map();
 
