@@ -2,13 +2,13 @@
 
 // @cat: ia et chat-bot
 
-// Version corrigÃ©e - DÃ©sactivation par dÃ©faut et plus humain
+// Version corrigée - Désactivation par défaut et plus humain
 
 import axios from 'axios';
 
 const CHANNEL_LINK = 'https://whatsapp.com/channel/0029VbBzhyQ4NVisPH1NSe1R';
 
-const CHANNEL_NAME = 'ðŸðƒðŽÌˆðŽÌƒðŒ ð’ð“ðˆð‚ðŠð„ð‘ð’ ðŸŒ¹';
+const CHANNEL_NAME = '🍁𝐃𝐎̈𝐎̃𝐌 𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒 🌹';
 
 // Stockage des conversations et modes par utilisateur
 
@@ -30,21 +30,21 @@ const APIS = [
 
 const modePrompts = {
 
-    normal: `Tu es Sakamoto, un pote cool. Parle naturellement, comme un humain. RÃ©ponds de maniÃ¨re simple et naturelle. Sois concis.`,
+    normal: `Tu es Sakamoto, un pote cool. Parle naturellement, comme un humain. Réponds de manière simple et naturelle. Sois concis.`,
 
     bro: `Tu es Sakamoto, un pote. Parle comme un mec normal. Utilise "frr" parfois. Sois naturel, pas trop familier.`,
 
-    girlfriend: `Tu es Sakamoto. Parle normalement, comme une pote. Sois sympa sans Ãªtre collante.`,
+    girlfriend: `Tu es Sakamoto. Parle normalement, comme une pote. Sois sympa sans être collante.`,
 
-    boyfriend: `Tu es Sakamoto. Parle normalement, comme un pote. Sois sympa sans Ãªtre collant.`,
+    boyfriend: `Tu es Sakamoto. Parle normalement, comme un pote. Sois sympa sans être collant.`,
 
     ami: `Tu es Sakamoto, un pote. Parle normalement. Sois sympa.`,
 
     amie: `Tu es Sakamoto, une pote. Parle normalement. Sois sympa.`,
 
-    boy: `Tu es Sakamoto, tu parles Ã  un pote. Sois naturel.`,
+    boy: `Tu es Sakamoto, tu parles à un pote. Sois naturel.`,
 
-    girl: `Tu es Sakamoto, tu parles Ã  une fille. Sois naturel.`
+    girl: `Tu es Sakamoto, tu parles à une fille. Sois naturel.`
 
 };
 
@@ -130,17 +130,17 @@ async function getAIResponse(prompt, userId = null) {
 
             const historyText = lastMessages.map(m => `${m.role === 'user' ? 'Moi' : 'Sakamoto'}: ${m.content}`).join('\n');
 
-            contextPrompt = `${modePrompt}\n\nContexte:\n${historyText}\n\nMessage: ${prompt}\n\nRÃ©ponds simplement:`;
+            contextPrompt = `${modePrompt}\n\nContexte:\n${historyText}\n\nMessage: ${prompt}\n\nRéponds simplement:`;
 
         } else {
 
-            contextPrompt = `${modePrompt}\n\nMessage: ${prompt}\n\nRÃ©ponds simplement:`;
+            contextPrompt = `${modePrompt}\n\nMessage: ${prompt}\n\nRéponds simplement:`;
 
         }
 
     } else {
 
-        contextPrompt = `${modePrompt}\n\nMessage: ${prompt}\n\nRÃ©ponds simplement:`;
+        contextPrompt = `${modePrompt}\n\nMessage: ${prompt}\n\nRéponds simplement:`;
 
     }
 
@@ -198,7 +198,7 @@ async function chatbotCommand(client, message, args) {
 
         setUserMode(userId, 'bro');
 
-        await client.sendMessage(remoteJid, { text: "ðŸ’ Mode bro activÃ©" });
+        await client.sendMessage(remoteJid, { text: "🍒 Mode bro activé" });
 
         return;
 
@@ -208,7 +208,7 @@ async function chatbotCommand(client, message, args) {
 
         setUserMode(userId, 'girlfriend');
 
-        await client.sendMessage(remoteJid, { text: "ðŸ’ Mode girlfriend activÃ©" });
+        await client.sendMessage(remoteJid, { text: "🍒 Mode girlfriend activé" });
 
         return;
 
@@ -218,7 +218,7 @@ async function chatbotCommand(client, message, args) {
 
         setUserMode(userId, 'boyfriend');
 
-        await client.sendMessage(remoteJid, { text: "ðŸ’ Mode boyfriend activÃ©" });
+        await client.sendMessage(remoteJid, { text: "🍒 Mode boyfriend activé" });
 
         return;
 
@@ -228,7 +228,7 @@ async function chatbotCommand(client, message, args) {
 
         setUserMode(userId, 'ami');
 
-        await client.sendMessage(remoteJid, { text: "ðŸ’ Mode ami activÃ©" });
+        await client.sendMessage(remoteJid, { text: "🍒 Mode ami activé" });
 
         return;
 
@@ -238,7 +238,7 @@ async function chatbotCommand(client, message, args) {
 
         setUserMode(userId, 'amie');
 
-        await client.sendMessage(remoteJid, { text: "ðŸ’ Mode amie activÃ©" });
+        await client.sendMessage(remoteJid, { text: "🍒 Mode amie activé" });
 
         return;
 
@@ -248,7 +248,7 @@ async function chatbotCommand(client, message, args) {
 
         setUserMode(userId, 'boy');
 
-        await client.sendMessage(remoteJid, { text: "ðŸ’ Mode boy activÃ©" });
+        await client.sendMessage(remoteJid, { text: "🍒 Mode boy activé" });
 
         return;
 
@@ -258,7 +258,7 @@ async function chatbotCommand(client, message, args) {
 
         setUserMode(userId, 'girl');
 
-        await client.sendMessage(remoteJid, { text: "ðŸ’ Mode girl activÃ©" });
+        await client.sendMessage(remoteJid, { text: "🍒 Mode girl activé" });
 
         return;
 
@@ -268,7 +268,7 @@ async function chatbotCommand(client, message, args) {
 
         setUserMode(userId, 'normal');
 
-        await client.sendMessage(remoteJid, { text: "ðŸ’ Mode normal activÃ©" });
+        await client.sendMessage(remoteJid, { text: "🍒 Mode normal activé" });
 
         return;
 
@@ -278,7 +278,7 @@ async function chatbotCommand(client, message, args) {
 
         const currentMode = getUserMode(userId);
 
-        await client.sendMessage(remoteJid, { text: `ðŸ’ Mode actuel : ${currentMode}` });
+        await client.sendMessage(remoteJid, { text: `🍒 Mode actuel : ${currentMode}` });
 
         return;
 
@@ -292,33 +292,33 @@ async function chatbotCommand(client, message, args) {
 
         const helpText = 
 
-`ðŸ’ *SAKAMOTO*
+`🍒 *SAKAMOTO*
 
-ðŸ“ *COMMANDES :*
+📝 *COMMANDES :*
 
-â€¢ *chat [message]* - Discuter
+• *chat [message]* - Discuter
 
-â€¢ *chat clear* - Effacer historique
+• *chat clear* - Effacer historique
 
-â€¢ *chat mode* - Voir mode actuel
+• *chat mode* - Voir mode actuel
 
-â€¢ *chat on* - Mode normal
+• *chat on* - Mode normal
 
-â€¢ *chat on bro* - Mode pote
+• *chat on bro* - Mode pote
 
-â€¢ *chat on girlfriend* - Mode copine
+• *chat on girlfriend* - Mode copine
 
-â€¢ *chat on boyfriend* - Mode copain
+• *chat on boyfriend* - Mode copain
 
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ðŸ“¢ *REJOINS MA CHAÃŽNE* ðŸ”¥
+📢 *REJOINS MA CHAÎNE* 🔥
 
 *${CHANNEL_NAME}*
 
 ${CHANNEL_LINK}
 
-> *DEV : AKANE KUROGAWAðŸŒ¹*`;
+> *DEV : AKANE KUROGAWA🌹*`;
 
         
 
@@ -336,7 +336,7 @@ ${CHANNEL_LINK}
 
         conversations.delete(userId);
 
-        await client.sendMessage(remoteJid, { text: "ðŸ§¹ Historique effacÃ©" });
+        await client.sendMessage(remoteJid, { text: "🧹 Historique effacé" });
 
         return;
 
@@ -348,7 +348,7 @@ ${CHANNEL_LINK}
 
     if (!prompt) {
 
-        await client.sendMessage(remoteJid, { text: "âŒ Utilisation : chat [message]" });
+        await client.sendMessage(remoteJid, { text: "❌ Utilisation : chat [message]" });
 
         return;
 
@@ -366,7 +366,7 @@ ${CHANNEL_LINK}
 
     if (!result.success) {
 
-        await client.sendMessage(remoteJid, { text: "âŒ Erreur, rÃ©essaie plus tard" });
+        await client.sendMessage(remoteJid, { text: "❌ Erreur, réessaie plus tard" });
 
         return;
 
