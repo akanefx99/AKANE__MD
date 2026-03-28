@@ -22,7 +22,7 @@ import connect from '../commands/connecte.js' // @cat: bot-menu
 import box from '../commands/box.js'
 import bye from '../commands/left.js'
 import group from '../commands/group.js' // @cat: gc-menu
-
+import web from '../commands/web.js'
 import app from '../commands/app.js' // @cat: media
 
 import block from '../commands/block.js' // @cat: bot-menu
@@ -596,6 +596,12 @@ case 'stack': // @cat: media
 
                     break
 
+
+case 'web': // @cat: media
+await react(client, message)
+await web(client, message)
+break 
+case
                 case 'vv': // @cat: media
 
                     await react(client, message)
